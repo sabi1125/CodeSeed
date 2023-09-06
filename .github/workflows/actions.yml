@@ -21,7 +21,6 @@ jobs:
       name: pull-request
       with:
         destination_branch: "v0.0.1"
-        pr_title: ${{ env.branch }}
-        pr_body: ${{ github.event.head_commit.message }}
+        pr_title: "${{ env.branch }} ${{ github.event.head_commit.message }}"
         pr_draft: true
         github_token: ${{ secrets.PAT }}
