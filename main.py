@@ -27,6 +27,11 @@ parser.add_argument('-s', '--server',
                     dest='server',
                     help='SPECIFY IF YOU WANT A BASIC SERVER FILE TO BE ADDED')
 
+parser.add_argument('-a', '--actions',
+                    action='store_true',
+                    dest='actions',
+                    help='SPECIFY IF YOU WANT A GITHUB ACTIONS TO BE ADDED')
+
 args = parser.parse_args()
 
 # create folders
@@ -54,3 +59,12 @@ if args.server:
     if create_server != 'ok':
         exit()
     print(create_server)
+
+# create github actions related folder and files
+
+if args.actions:
+    create_actions = util.create_actions(args)
+    if create_actions != 'ok':
+        exit()
+    print(create_actions)
+

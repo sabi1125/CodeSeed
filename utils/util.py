@@ -88,3 +88,16 @@ def create_server(args):
         return 'ok'
 
     return 'UNEXPECTED ERROR ENCOUNTERED'
+
+# create actions
+def create_actions(args):
+    os.mkdir('.github')
+    os.mkdir('.github/workflows')
+    os.chdir('.github/workflows')
+    file = open('actions.yml', 'x')
+    file.write('# your github-actions go here')
+    file.close()
+    os.chdir('..')
+    os.chdir('..')
+
+    return 'ok'
