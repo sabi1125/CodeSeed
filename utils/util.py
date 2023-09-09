@@ -1,5 +1,6 @@
 import os
 
+# create folders
 def create_folders(args):
     unix_folder_paths = [
             '/src', 
@@ -30,21 +31,38 @@ def create_folders(args):
         print("CREATING " + "./" + args.project_dir + path)
         os.mkdir("./" + args.project_dir + path)
 
-    return 'FOLDERS CREATED'
+    if args.docker:
+        os.mkdir("./" + args.project_dir + "/docker")
 
-def create_files(language, project_dir):
-    if language == "typescript":
-        os.chdir("./" + project_dir)
+    return 'ok'
+
+# create files
+def create_files(args):
+    if args.language == "typescript":
+        os.chdir("./" + args.project_dir)
         os.system("git init")
         os.system("npm i typescript --save-dev")
-        os.system("npx tsc --init -y")
-        return 'FILES CREATED'
+        os.system("npx tsc --init")
+        return 'ok'
      
-    if language == "golang":
-        os.chdir("./" + project_dir)
+    if args.language == "golang":
+        os.chdir("./" + args.project_dir)
         os.system("git init") # in the future could add the remote repository if given
-        os.system("go mod init " + project_dir)
-        return 'FILES CREATED'
-    
+        os.system("go mod init " + args.project_dir)
+        return 'ok'
+
+
     return 'UNEXPECTED ERROR ENCOUNTERED'
 
+
+# create dockerfile
+def create_dockerfile(args):
+    docker_compose_file = open('docker-compose.yml', 'x')
+    docker_compose_file.write('#write your docker compose file here')
+    docker_compose_file.close()
+    os.chdir('docker')
+    dockerfile = open('DOCKERFILE', 'x')
+    dockerfile.write('#write you dockerfile here')
+    dockerfile.close()
+    os.chdir('..')
+    return 'ok'
