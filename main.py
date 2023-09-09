@@ -29,9 +29,18 @@ parser.add_argument('-s', '--server',
 
 args = parser.parse_args()
 
-
+# create folders
 create_folders = util.create_folders(args)
+if create_folders != 'ok':
+    exit()
 print(create_folders)
-create_files = util.create_files(args.language, args.project_dir)
+
+# create files
+create_files = util.create_files(args)
+if create_files != 'ok':
+    exit()
 print(create_files)
 
+# create docker files
+if args.docker:
+    create_dockerfile = util.create_dockerfile(args)
