@@ -1,6 +1,5 @@
 import os
 
-
 def create_folders(args):
     unix_folder_paths = [
             '/src', 
@@ -30,3 +29,22 @@ def create_folders(args):
     for path in unix_folder_paths:
         print("CREATING " + "./" + args.project_dir + path)
         os.mkdir("./" + args.project_dir + path)
+
+    return 'FOLDERS CREATED'
+
+def create_files(language, project_dir):
+    if language == "typescript":
+        os.chdir("./" + project_dir)
+        os.system("git init")
+        os.system("npm i typescript --save-dev")
+        os.system("npx tsc --init -y")
+        return 'FILES CREATED'
+     
+    if language == "golang":
+        os.chdir("./" + project_dir)
+        os.system("git init") # in the future could add the remote repository if given
+        os.system("go mod init " + project_dir)
+        return 'FILES CREATED'
+    
+    return 'UNEXPECTED ERROR ENCOUNTERED'
+

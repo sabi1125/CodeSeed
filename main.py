@@ -29,4 +29,9 @@ parser.add_argument('-s', '--server',
 
 args = parser.parse_args()
 
-util.create_folders(args)
+
+create_folders = util.create_folders(args)
+print(create_folders)
+create_files = util.create_files(args.language, args.project_dir)
+print(create_files)
+
