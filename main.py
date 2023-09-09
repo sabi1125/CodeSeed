@@ -1,14 +1,15 @@
 import argparse
+from utils import util
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('create', 
+parser.add_argument('project_dir', 
                     help="CREATES FOLDER'S AND FILES FOR YOUR PROJECT")
 
 parser.add_argument('-l', '--lang', 
                     dest='language',
-                    choices=['go','ts'],
-                    default='ts',
+                    choices=['golang','typescript'],
+                    default='typescript',
                     help='SPECIFY THE LANGUAGE YOU WANT YOUR PROJECT TO BE IN')
 
 parser.add_argument('-d', '--docker', 
@@ -28,4 +29,4 @@ parser.add_argument('-s', '--server',
 
 args = parser.parse_args()
 
-
+util.create_folders(args)
