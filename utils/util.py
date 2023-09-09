@@ -7,6 +7,7 @@ def create_folders(args):
             '/src/controller',
             '/src/domain',
             '/src/interfaces',
+            '/src/infrastructure',
             '/src/interfaces/interactor',
             '/src/repository',
             '/src/model'
@@ -18,37 +19,37 @@ def create_folders(args):
     for dir_name in list_of_directory:
         if dir_name == args.project_dir:
             dir_already_exists = True
-            print("YOU CANNOT USE " + args.project_dir + " AS YOUR DIRECTORY NAME BECAUSE IT ALREADY EXISTS")
+            print('YOU CANNOT USE ' + args.project_dir + ' AS YOUR DIRECTORY NAME BECAUSE IT ALREADY EXISTS')
             return
 
     # create the root folder
     if dir_already_exists == False:
-        print("CREATING THE ROOT DIRECTORY")
-        os.mkdir("./" + args.project_dir)
+        print('CREATING THE ROOT DIRECTORY')
+        os.mkdir('./' + args.project_dir)
 
     # create all the folders
     for path in unix_folder_paths:
-        print("CREATING " + "./" + args.project_dir + path)
-        os.mkdir("./" + args.project_dir + path)
+        print('CREATING ' + './' + args.project_dir + path)
+        os.mkdir('./' + args.project_dir + path)
 
     if args.docker:
-        os.mkdir("./" + args.project_dir + "/docker")
+        os.mkdir('./' + args.project_dir + '/docker')
 
     return 'ok'
 
 # create files
 def create_files(args):
-    if args.language == "typescript":
-        os.chdir("./" + args.project_dir)
-        os.system("git init")
-        os.system("npm i typescript --save-dev")
-        os.system("npx tsc --init")
+    if args.language == 'typescript':
+        os.chdir('./' + args.project_dir)
+        os.system('git init')
+        os.system('npm i typescript --save-dev')
+        os.system('npx tsc --init')
         return 'ok'
      
-    if args.language == "golang":
-        os.chdir("./" + args.project_dir)
-        os.system("git init") # in the future could add the remote repository if given
-        os.system("go mod init " + args.project_dir)
+    if args.language == 'golang':
+        os.chdir('./' + args.project_dir)
+        os.system('git init') # in the future could add the remote repository if given
+        os.system('go mod init ' + args.project_dir)
         return 'ok'
 
 
@@ -61,8 +62,29 @@ def create_dockerfile(args):
     docker_compose_file.write('#write your docker compose file here')
     docker_compose_file.close()
     os.chdir('docker')
+
     dockerfile = open('DOCKERFILE', 'x')
     dockerfile.write('#write you dockerfile here')
     dockerfile.close()
     os.chdir('..')
     return 'ok'
+
+# create serverfile
+def create_server(args):
+    if args.language == 'typescript':
+        os.chdir('src')
+        file = open('server.ts', 'x')
+        file.write('// server file')
+        file.close()
+        os.chdir('..')
+        return 'ok'
+
+    if args.language == 'golang':
+        os.chdir('src')
+        file = open('server.go', 'x')
+        file.write('// server file')
+        file.close()
+        os.chdir('..')
+        return 'ok'
+
+    return 'UNEXPECTED ERROR ENCOUNTERED'

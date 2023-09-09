@@ -44,3 +44,13 @@ print(create_files)
 # create docker files
 if args.docker:
     create_dockerfile = util.create_dockerfile(args)
+    if create_dockerfile != 'ok':
+        exit()
+    print(create_dockerfile)
+
+# create server file
+if args.server:
+    create_server = util.create_server(args)
+    if create_server != 'ok':
+        exit()
+    print(create_server)
