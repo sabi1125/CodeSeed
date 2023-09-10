@@ -42,14 +42,18 @@ def create_files(args):
     if args.language == 'typescript':
         os.chdir('./' + args.project_dir)
         os.system('git init')
+        os.chdir('./src')
         os.system('npm i typescript --save-dev')
         os.system('npx tsc --init')
+        os.chdir('..')
         return 'ok'
      
     if args.language == 'golang':
         os.chdir('./' + args.project_dir)
-        os.system('git init') # in the future could add the remote repository if given
+        os.system('git init')
+        os.chdir('./src')
         os.system('go mod init ' + args.project_dir)
+        os.chdir('..')
         return 'ok'
 
 
@@ -101,3 +105,38 @@ def create_actions(args):
     os.chdir('..')
 
     return 'ok'
+
+# install dependencies
+def install_dependencies(args):
+    if args.language == 'typescript':
+        os.chdir('./src')
+        dependencies = [
+                'npm install express', 
+                'npm install @types/express',
+                'npm install ts-node', 
+                'npm install ts-dotenv',
+                'npm install cors', 
+                'npm install winston',
+                'npm install helmet'
+                ]
+        for items in dependencies:
+            os.system(items)
+
+        os.chdir('..')
+        return 'ok'
+
+    if args.language == 'golang':
+        os.chdir('./src')
+        dependencies = [
+                'go get -u github.com/labstack/echo/v4',
+                'go get -u github.com/francoispqt/onelog',
+                'go get -u gorm.io/gorm'
+                ]
+        for items in dependencies:
+            os.system(items)
+
+        os.chdir('..')
+        return 'ok'
+
+    return 'UNEXPECTED ERROR ENCOUNTERED'
+
