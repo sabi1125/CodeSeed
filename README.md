@@ -17,6 +17,8 @@ This script works for both Widows and Unix systems. To install the codeseed firs
 ```
 git clone https://github.com/sabi1125/CodeSeed.git
 ```
+### The Easy
+The easiest way to use CodeSeed is to download OS specific binary from the latest release and add the path to the Environment Variable.
 ### Darwin
 If you have Python3 installed on your local machine then you can use the `install.sh` script that is present in the CodeSeed folder, or alternatively you can just add the path to the dist folder in your `rc` file. If you are using the `install.sh` script then be sure to use the following command to make the script file an executable.
 
