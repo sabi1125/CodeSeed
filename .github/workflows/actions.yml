@@ -1,0 +1,27 @@
+name: Create Pull Request
+
+on:
+  push:
+    branches:
+      - 'feature/*' 
+
+jobs:
+  create_pull_request:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Declare declare branch 
+      shell: bash
+      run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> "$GITHUB_ENV"
+
+    - uses: repo-sync/pull-request@v2
+      name: pull-request
+      with:
+        destination_branch: "v0.0.1"
+        pr_title: "${{ env.branch }} ${{ github.event.head_commit.message }}"
+        pr_body: "INTEGRATED LINEAR SECTION HAS THE BODY"
+        pr_draft: true
+        github_token: ${{ secrets.PAT }}
