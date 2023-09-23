@@ -22,6 +22,6 @@ jobs:
       with:
         destination_branch: "v0.1.0"
         pr_title: "${{ env.branch }} ${{ github.event.head_commit.message }}"
-        pr_body: "INTEGRATED LINEAR SECTION HAS THE BODY"
+        pr_body: "The pull request details are written on Linear"
         pr_draft: true
         github_token: ${{ secrets.PAT }}
