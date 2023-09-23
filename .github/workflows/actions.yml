@@ -20,7 +20,7 @@ jobs:
     - uses: repo-sync/pull-request@v2
       name: pull-request
       with:
-        destination_branch: "v0.0.1"
+        destination_branch: "v0.1.0"
         pr_title: "${{ env.branch }} ${{ github.event.head_commit.message }}"
         pr_body: "INTEGRATED LINEAR SECTION HAS THE BODY"
         pr_draft: true
