@@ -141,3 +141,9 @@ def install_dependencies(args):
 
     return 'UNEXPECTED ERROR ENCOUNTERED'
 
+# add remote repository
+def add_remote_repository(args):
+    command = 'git remote add origin ' + args.url
+    print('RUNNING: ' + command)
+    os.system(command)
+    return 'ok'

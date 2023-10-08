@@ -47,3 +47,10 @@ def init_command(args):
             exit()
         print('CREATING GITHUB ACTIONS: ' + github_actions)
 
+    # add remote repository
+    if args.url:
+        add_remote = functions.add_remote_repository(args)
+        if add_remote != 'ok':
+            print('ADDING REMOTE REPOSITORY: ' + add_remote)
+            exit()
+        print('ADDED REMOTE REPOSITORY: ' + add_remote)

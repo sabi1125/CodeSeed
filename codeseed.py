@@ -32,6 +32,10 @@ init_parser.add_argument('-a', '--actions',
                     dest='actions',
                     help='SPECIFY IF YOU WANT A GITHUB ACTIONS TO BE ADDED')
 
+init_parser.add_argument('-u', '--url',
+                        dest='url',
+                        help='ADD URL TO THE REMOTE REPOSITORY')
+
 args = parser.parse_args()
 
 if args.command == "init":
