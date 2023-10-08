@@ -1,6 +1,5 @@
 import os
 
-
 # create folders
 def create_folders(args):
     unix_folder_paths = [
@@ -71,6 +70,12 @@ def create_dockerfile(args):
     dockerfile = open('DOCKERFILE', 'x')
     dockerfile.write('#write you dockerfile here')
     dockerfile.close()
+    os.chdir('..')
+    os.mkdir('scripts')
+    os.chdir('scripts')
+    file = open('entrypoint.sh', 'x')
+    file.write('// serverfile')
+    file.close()
     os.chdir('..')
     return 'ok'
 
