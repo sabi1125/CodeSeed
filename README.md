@@ -1,4 +1,4 @@
-[#](#) CodeSeed
+# CodeSeed
 CodeSeed is a script that automates the creation of the file structure of your backend API. It creates all the files and folders necessary so you can jump right in and start working on your backend project. Currently it only supports two languages (golang and typescript) but the next version will support multiple languages.
 
 The name CodeSeed comes from the fact that this script helps you seed our backend API that will later grow to be your project.
