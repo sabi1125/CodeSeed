@@ -1,4 +1,4 @@
-# CodeSeed
+[#](#) CodeSeed
 CodeSeed is a script that automates the creation of the file structure of your backend API. It creates all the files and folders necessary so you can jump right in and start working on your backend project. Currently it only supports two languages (golang and typescript) but the next version will support multiple languages.
 
 The name CodeSeed comes from the fact that this script helps you seed our backend API that will later grow to be your project.
@@ -30,12 +30,25 @@ Just clone the github repository and add the path to the dist folder inside of t
 Using CodeSeed is very easy. You just need to call codeseed on your terminal and add the name of the Backend project you want to create. Like the following.
 
 ```
-codeseed <project-name> --options
+codeseed init <project-name> --options
 ```
 This will make a folder with a Backend project on your local machine. 
 
 > ***Note: The next version will install a basic server that you can make a HTTP request from the browser or just CURL it.*** 
 
+The options can be chained if the option does't require a following argument like the following.
+
+```
+codeseed init <project-name> -dras
+```
+
+Options like `language` and `url` requires a string argument so they cannot be chained.
+
+## Argument
+
+| Argument | Description                                                                                             |
+| ------   | -----------                                                                                             |
+| init     | Init is the argument to create new project and is followed by a string which will be the project folder |
 
 ## Options
 | Option         | ShortHand | Description                                                                                             |
@@ -45,6 +58,8 @@ This will make a folder with a Backend project on your local machine.
 | --requirements | -r        | REQUIREMENTS INSTALLS THE PACKAGES(DEPENDENCIES) THAT IS REQUIRED FOR THE PROJECT                       |
 | --actions      | -a        | Creates a github actions folder and file                                                                |
 | --server       | -s        | Creates the server file for the language you have selected                                              |
+| --url          | -u        | Adds the remote github repository for the new project                                                   |
+
 
 If no language is selected when creating the project directory with -s or -r then the default languate will be selected.
 
