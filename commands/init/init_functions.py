@@ -74,7 +74,7 @@ def create_dockerfile(args):
     os.mkdir('scripts')
     os.chdir('scripts')
     file = open('entrypoint.sh', 'x')
-    file.write('// serverfile')
+    file.write('// script file')
     file.close()
     os.chdir('..')
     return 'ok'
@@ -83,8 +83,23 @@ def create_dockerfile(args):
 def create_server(args):
     if args.language == 'typescript':
         os.chdir('src')
+
         file = open('server.ts', 'x')
-        file.write('// server file')
+        server_code = """
+import express from 'express';
+
+const app = express();
+const port = 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello, Express!');
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+        """
+        file.write(server_code)
         file.close()
         os.chdir('..')
         return 'ok'
@@ -92,7 +107,29 @@ def create_server(args):
     if args.language == 'golang':
         os.chdir('src')
         file = open('server.go', 'x')
-        file.write('// server file')
+        server_code = """
+package main
+
+import (
+    "net/http"
+
+    "github.com/labstack/echo/v4"
+)
+
+func main() {
+    // Create an Echo instance
+    e := echo.New()
+
+    // Define a route
+    e.GET("/", func(c echo.Context) error {
+        return c.String(http.StatusOK, "Hello, Echo!")
+    })
+
+    // Start the server
+    e.Start(":8080")
+}
+"""
+        file.write(server_code) 
         file.close()
         os.chdir('..')
         return 'ok'
