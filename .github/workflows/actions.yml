@@ -25,3 +25,20 @@ jobs:
         pr_body: "The pull request details are written on Linear"
         pr_draft: true
         github_token: ${{ secrets.PAT }}
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x  # Specify your desired Python version
+
+    - name: Install PyInstaller
+      run: pip install pyinstaller
+
+    - name: Build with PyInstaller
+      run: python -m PyInstaller --onefile codeseed.py
