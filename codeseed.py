@@ -17,10 +17,10 @@ init_parser.add_argument('-d', '--docker',
                     dest='docker',
                     help='SPECIFY IF YOU WANT YOUR PROJECT TO HAVE DOCKER FILES')
 
-init_parser.add_argument('-dp', '--dependencies', 
+init_parser.add_argument('-r', '--requirements', 
                     action='store_true',
-                    dest='dependencies',
-                    help='SPECIFY IF YOU WANT BASIC DEPENDENCIES TO BE INSTALLED')
+                    dest='requirements',
+                    help='REQUIREMENTS INSTALLS THE PACKAGES(DEPENDENCIES) THAT IS REQUIRED FOR THE PROJECT')
 
 init_parser.add_argument('-s', '--server',
                     action='store_true',

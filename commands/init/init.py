@@ -1,4 +1,4 @@
-from . import functions 
+from . import init_functions as functions
 
 def init_command(args):
     # create folders
@@ -24,12 +24,12 @@ def init_command(args):
         print('CREATING DOCKER FILES: ' + dockerfile)
 
     # install dependencies
-    if args.dependencies:
-        dependencies = functions.install_dependencies(args)
-        if dependencies != 'ok':
-            print('INSTALLING DEPENDENCIES:' + dependencies)
+    if args.requirements:
+        requirements = functions.install_dependencies(args)
+        if requirements != 'ok':
+            print('INSTALLING REQUIREMENTS:' + requirements)
             exit()
-        print('INSTALLING DEPENDENCIES:' + dependencies)
+        print('INSTALLING REQUIREMENTS:' + requirements)
 
     # create server file
     if args.server:
