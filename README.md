@@ -19,6 +19,7 @@ git clone https://github.com/sabi1125/CodeSeed.git
 ```
 ### The Easy
 The easiest way to use CodeSeed is to download OS specific binary from the latest release and add the path to the Environment Variable.
+
 ### Darwin
 If you have Python3 installed on your local machine then you can use the `install.sh` script that is present in the CodeSeed folder, or alternatively you can just add the path to the dist folder in your `rc` file. If you are using the `install.sh` script then be sure to use the following command to make the script file an executable.
 
@@ -35,16 +36,17 @@ This will make a folder with a Backend project on your local machine.
 
 > ***Note: The next version will install a basic server that you can make a HTTP request from the browser or just CURL it.*** 
 
-## Options
-| Option | ShortHand | Description |
-| ------ | --------- | ----------- |
-| --language | -l | Select the language you want your project to be setup in. Currently only supports golang and typescript |
-| --docker | -d | Creates Dockerfile and docker-compose.yml file for your project |
-| --dependencies | -dp | Installs basic dependencies for the language you have selected |
-| --actions | -a | Creates a github actions folder and file |
-| --server | -s | Creates the server file for the language you have selected |
 
-If no language is selected when creating the project directory with -s or -dp then the default languate will be selected.
+## Options
+| Option         | ShortHand | Description                                                                                             |
+| ------         | --------- | -----------                                                                                             |
+| --language     | -l        | Select the language you want your project to be setup in. Currently only supports golang and typescript |
+| --docker       | -d        | Creates Dockerfile and docker-compose.yml file for your project                                         |
+| --requirements | -r        | REQUIREMENTS INSTALLS THE PACKAGES(DEPENDENCIES) THAT IS REQUIRED FOR THE PROJECT                       |
+| --actions      | -a        | Creates a github actions folder and file                                                                |
+| --server       | -s        | Creates the server file for the language you have selected                                              |
+
+If no language is selected when creating the project directory with -s or -r then the default languate will be selected.
 
 > ***Note:  The default language is Typescript***
  
