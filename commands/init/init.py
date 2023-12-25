@@ -3,14 +3,14 @@ from . import init_functions as functions
 def init_command(args):
     # create folders
     folders = functions.create_folders(args)
-    if folders != 'ok':
+    if folders != 'DONE':
         print('CREATING FOLDERS: ' + folders)
         exit()
     print('CREATING FOLDERS: ' + folders)
 
     # create files
     files = functions.create_files(args)
-    if files != 'ok':
+    if files != 'DONE':
         print('CREATING FILES: ' + files)
         exit()
     print('CREATING FILES: ' + files)
@@ -18,7 +18,7 @@ def init_command(args):
     # create docker files
     if args.docker:
         dockerfile = functions.create_dockerfile(args)
-        if dockerfile != 'ok':
+        if dockerfile != 'DONE':
             print('CREATING DOCKER FILES: ' + dockerfile)
             exit()
         print('CREATING DOCKER FILES: ' + dockerfile)
@@ -26,7 +26,7 @@ def init_command(args):
     # install dependencies
     if args.requirements:
         requirements = functions.install_dependencies(args)
-        if requirements != 'ok':
+        if requirements != 'DONE':
             print('INSTALLING REQUIREMENTS:' + requirements)
             exit()
         print('INSTALLING REQUIREMENTS:' + requirements)
@@ -34,7 +34,7 @@ def init_command(args):
     # create server file
     if args.server:
         server = functions.create_server(args)
-        if server != 'ok':
+        if server != 'DONE':
             print('CREATING SERVER FILE:' + server)
             exit()
         print('CREATING SERVER FILE:' + server)
@@ -42,7 +42,7 @@ def init_command(args):
     # create github actions related folder and files
     if args.actions:
         github_actions = functions.create_actions(args)
-        if github_actions != 'ok':
+        if github_actions != 'DONE':
             print('CREATING GITHUB ACTIONS: ' + github_actions)
             exit()
         print('CREATING GITHUB ACTIONS: ' + github_actions)
@@ -50,7 +50,11 @@ def init_command(args):
     # add remote repository
     if args.url:
         add_remote = functions.add_remote_repository(args)
-        if add_remote != 'ok':
+        if add_remote != 'DONE':
             print('ADDING REMOTE REPOSITORY: ' + add_remote)
             exit()
         print('ADDED REMOTE REPOSITORY: ' + add_remote)
+
+    create_dotfiles = functions.create_dotfiles(args)
+    print('CREATING DOTFILE: ' + create_dotfiles)
+

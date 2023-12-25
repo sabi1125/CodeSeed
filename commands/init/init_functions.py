@@ -1,60 +1,72 @@
 import os
+import json
+
+def create_dotfiles(args):
+    config = {
+        "language": args.language,
+        "root": os.getcwd(),
+        "remote": args.url,
+    }
+    with open('.codeseed.json', "w") as json_file:
+        json.dump(config, json_file, indent=4)  # indent is optional, but it makes the file more readable
+
+    return 'DONE'
 
 # create folders
 def create_folders(args):
     unix_folder_paths = [
-            '/src', 
-            '/src/controller',
-            '/src/domain',
-            '/src/interfaces',
-            '/src/infrastructure',
-            '/src/interfaces/interactor',
-            '/src/repository',
-            '/src/model'
-            ]
+        '/src', 
+        '/src/controller',
+        '/src/domain',
+        '/src/interfaces',
+        '/src/infrastructure',
+        '/src/interfaces/interactor',
+        '/src/repository',
+        '/src/model'
+    ]
 
     list_of_directory = os.listdir("./")
     dir_already_exists = False
 
     for dir_name in list_of_directory:
-        if dir_name == args.filename:
+        if dir_name == args.foldername:
             dir_already_exists = True
-            print('YOU CANNOT USE ' + args.filename + ' AS YOUR DIRECTORY NAME BECAUSE IT ALREADY EXISTS')
+            print('YOU CANNOT USE ' + args.foldername + ' AS YOUR DIRECTORY NAME BECAUSE IT ALREADY EXISTS')
             return
 
     # create the root folder
     if dir_already_exists == False:
         print('CREATING THE ROOT DIRECTORY')
-        os.mkdir('./' + args.filename)
+        os.mkdir('./' + args.foldername)
 
     # create all the folders
     for path in unix_folder_paths:
-        print('CREATING ' + './' + args.filename + path)
-        os.mkdir('./' + args.filename + path)
+        print('CREATING ' + './' + args.foldername + path)
+        os.mkdir('./' + args.foldername + path)
 
     if args.docker:
-        os.mkdir('./' + args.filename + '/docker')
+        os.mkdir('./' + args.foldername + '/docker')
 
-    return 'ok'
+    return 'DONE'
 
 # create files
 def create_files(args):
     if args.language == 'typescript':
-        os.chdir('./' + args.filename)
+        os.chdir('./' + args.foldername)
         os.system('git init')
         os.chdir('./src')
         os.system('npm i typescript --save-dev')
         os.system('npx tsc --init')
         os.chdir('..')
-        return 'ok'
-     
+        return 'DONE'
+
     if args.language == 'golang':
-        os.chdir('./' + args.filename)
+        os.chdir('./' + args.foldername)
         os.system('git init')
         os.chdir('./src')
-        os.system('go mod init ' + args.filename)
+        os.system('go mod init ' + args.foldername)
         os.chdir('..')
-        return 'ok'
+        return 'DONE'
 
 
     return 'UNEXPECTED ERROR ENCOUNTERED'
@@ -77,7 +89,7 @@ def create_dockerfile(args):
     file.write('// script file')
     file.close()
     os.chdir('..')
-    return 'ok'
+    return 'DONE'
 
 # create serverfile
 def create_server(args):
@@ -102,7 +114,7 @@ app.listen(port, () => {
         file.write(server_code)
         file.close()
         os.chdir('..')
-        return 'ok'
+        return 'DONE'
 
     if args.language == 'golang':
         os.chdir('src')
@@ -132,7 +144,7 @@ func main() {
         file.write(server_code) 
         file.close()
         os.chdir('..')
-        return 'ok'
+        return 'DONE'
 
     return 'UNEXPECTED ERROR ENCOUNTERED'
 
@@ -147,39 +159,39 @@ def create_actions(args):
     os.chdir('..')
     os.chdir('..')
 
-    return 'ok'
+    return 'DONE'
 
 # install dependencies
 def install_dependencies(args):
     if args.language == 'typescript':
         os.chdir('./src')
         dependencies = [
-                'npm install express', 
-                'npm install @types/express',
-                'npm install ts-node', 
-                'npm install ts-dotenv',
-                'npm install cors', 
-                'npm install winston',
-                'npm install helmet'
-                ]
+            'npm install express', 
+            'npm install @types/express',
+            'npm install ts-node', 
+            'npm install ts-dotenv',
+            'npm install cors', 
+            'npm install winston',
+            'npm install helmet'
+        ]
         for items in dependencies:
             os.system(items)
 
         os.chdir('..')
-        return 'ok'
+        return 'DONE'
 
     if args.language == 'golang':
         os.chdir('./src')
         dependencies = [
-                'go get -u github.com/labstack/echo/v4',
-                'go get -u github.com/francoispqt/onelog',
-                'go get -u gorm.io/gorm'
-                ]
+            'go get -u github.com/labstack/echo/v4',
+            'go get -u github.com/francoispqt/onelog',
+            'go get -u gorm.io/gorm'
+        ]
         for items in dependencies:
             os.system(items)
 
         os.chdir('..')
-        return 'ok'
+        return 'DONE'
 
     return 'UNEXPECTED ERROR ENCOUNTERED'
 
@@ -188,4 +200,6 @@ def add_remote_repository(args):
     command = 'git remote add origin ' + args.url
     print('RUNNING: ' + command)
     os.system(command)
-    return 'ok'
+    return 'DONE'
+
+
