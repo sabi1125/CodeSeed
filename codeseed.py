@@ -1,9 +1,11 @@
 import argparse
 from commands.init import init
+from commands.create import create
 
 parser = argparse.ArgumentParser()
 subparser = parser.add_subparsers(dest="command")
 
+# init command
 init_parser = subparser.add_parser("init", help="initilizes init command")
 init_parser.add_argument("foldername", help="add the foldername")
 init_parser.add_argument('-l', '--lang', 
@@ -36,7 +38,12 @@ init_parser.add_argument('-u', '--url',
                         dest='url',
                         help='ADD URL TO THE REMOTE REPOSITORY')
 
+# create command
+create_parser = subparser.add_parser("create", help="initilizes init command")
+create_parser.add_argument("filename", help="add the filename")
+
 args = parser.parse_args()
+
 
 if args.command == "init":
     init.init_command(args)

@@ -5,14 +5,14 @@ def init_command(args):
     folders = functions.create_folders(args)
     if folders != 'DONE':
         print('CREATING FOLDERS: ' + folders)
-        exit()
+        return
     print('CREATING FOLDERS: ' + folders)
 
     # create files
     files = functions.create_files(args)
     if files != 'DONE':
         print('CREATING FILES: ' + files)
-        exit()
+        return
     print('CREATING FILES: ' + files)
 
     # create docker files
@@ -20,7 +20,7 @@ def init_command(args):
         dockerfile = functions.create_dockerfile(args)
         if dockerfile != 'DONE':
             print('CREATING DOCKER FILES: ' + dockerfile)
-            exit()
+            return
         print('CREATING DOCKER FILES: ' + dockerfile)
 
     # install dependencies
@@ -28,7 +28,7 @@ def init_command(args):
         requirements = functions.install_dependencies(args)
         if requirements != 'DONE':
             print('INSTALLING REQUIREMENTS:' + requirements)
-            exit()
+            return
         print('INSTALLING REQUIREMENTS:' + requirements)
 
     # create server file
@@ -36,7 +36,7 @@ def init_command(args):
         server = functions.create_server(args)
         if server != 'DONE':
             print('CREATING SERVER FILE:' + server)
-            exit()
+            return
         print('CREATING SERVER FILE:' + server)
 
     # create github actions related folder and files
@@ -44,7 +44,7 @@ def init_command(args):
         github_actions = functions.create_actions(args)
         if github_actions != 'DONE':
             print('CREATING GITHUB ACTIONS: ' + github_actions)
-            exit()
+            return
         print('CREATING GITHUB ACTIONS: ' + github_actions)
 
     # add remote repository
@@ -52,7 +52,7 @@ def init_command(args):
         add_remote = functions.add_remote_repository(args)
         if add_remote != 'DONE':
             print('ADDING REMOTE REPOSITORY: ' + add_remote)
-            exit()
+            return
         print('ADDED REMOTE REPOSITORY: ' + add_remote)
 
     create_dotfiles = functions.create_dotfiles(args)
