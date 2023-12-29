@@ -4,14 +4,14 @@ def init_command(args):
     # create folders
     folders = functions.create_folders(args)
     if folders != 'DONE':
-        print('CREATING FOLDERS: ' + folders)
+        print('PROBLEM CREATING PROJECT FOLDERS')
         return
     print('CREATING FOLDERS: ' + folders)
 
     # create files
     files = functions.create_files(args)
     if files != 'DONE':
-        print('CREATING FILES: ' + files)
+        print('PROBLEM CREATING PROJECT FILES')
         return
     print('CREATING FILES: ' + files)
 
@@ -19,7 +19,7 @@ def init_command(args):
     if args.docker:
         dockerfile = functions.create_dockerfile(args)
         if dockerfile != 'DONE':
-            print('CREATING DOCKER FILES: ' + dockerfile)
+            print('PROBLEM CREATING DOCKERFILES')
             return
         print('CREATING DOCKER FILES: ' + dockerfile)
 
@@ -27,7 +27,7 @@ def init_command(args):
     if args.requirements:
         requirements = functions.install_dependencies(args)
         if requirements != 'DONE':
-            print('INSTALLING REQUIREMENTS:' + requirements)
+            print('PROBLEM INSTALLING DEPENDENCIES')
             return
         print('INSTALLING REQUIREMENTS:' + requirements)
 
@@ -35,7 +35,7 @@ def init_command(args):
     if args.server:
         server = functions.create_server(args)
         if server != 'DONE':
-            print('CREATING SERVER FILE:' + server)
+            print('PROBLEM CREATING SERVER FILES')
             return
         print('CREATING SERVER FILE:' + server)
 
@@ -43,7 +43,7 @@ def init_command(args):
     if args.actions:
         github_actions = functions.create_actions(args)
         if github_actions != 'DONE':
-            print('CREATING GITHUB ACTIONS: ' + github_actions)
+            print('PROBLEM CREATING GITHUB ACTIONS')
             return
         print('CREATING GITHUB ACTIONS: ' + github_actions)
 
@@ -51,7 +51,7 @@ def init_command(args):
     if args.url:
         add_remote = functions.add_remote_repository(args)
         if add_remote != 'DONE':
-            print('ADDING REMOTE REPOSITORY: ' + add_remote)
+            print('PROBLEM ADDING REMOTE URL')
             return
         print('ADDED REMOTE REPOSITORY: ' + add_remote)
 

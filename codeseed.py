@@ -1,4 +1,6 @@
 import argparse
+import platform
+
 from commands.init import init
 from commands.create import create
 
@@ -43,7 +45,7 @@ create_parser = subparser.add_parser("create", help="initilizes init command")
 create_parser.add_argument("filename", help="add the filename")
 
 args = parser.parse_args()
-
+args.platform = platform.system()
 
 if args.command == "init":
     init.init_command(args)
