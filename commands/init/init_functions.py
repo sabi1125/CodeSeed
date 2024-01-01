@@ -14,7 +14,7 @@ def create_dotfiles(args):
 
 # create folders
 def create_folders(args):
-    unix_folder_paths = [
+    folder_paths = [
         '/src', 
         '/src/controller',
         '/src/domain',
@@ -40,7 +40,7 @@ def create_folders(args):
         os.mkdir('./' + args.foldername)
 
     # create all the folders
-    for path in unix_folder_paths:
+    for path in folder_paths:
         print('CREATING ' + './' + args.foldername + path)
         os.mkdir('./' + args.foldername + path)
 
