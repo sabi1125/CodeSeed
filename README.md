@@ -7,12 +7,25 @@ Happy Hacking!!
 
 
 ## Contents
+- [Requirements](#requirements)
 - [Installation](#installation)
     - [The Easy Way](#the-easy-way)
     - [Linux && Darwin](#linux--darwin)
     - [Windows](#windows)
 - [Usage](#usage)
 - [Options](#options)
+
+## Requirements
+You will require the following to use codeseed
+- Nodejs
+- NPM
+- Golang
+
+> ***Note: If you are only going to be using Typescript for your project then you will only need Nodejs and NPM. The same goes for golang***
+
+The following is required for manual installation
+- Python3
+- Pip3
 
 ## Installation
 
@@ -67,14 +80,14 @@ codeseed init --language golang --url git@github.com:sabi1125/CodeSeed.git
 | ------         | --------- | -----------                                                                                             |
 | --language     | -l        | Select the language you want your project to be setup in. Currently only supports golang and typescript |
 | --docker       | -d        | Creates Dockerfile and docker-compose.yml file for your project                                         |
-| --requirements | -r        | REQUIREMENTS INSTALLS THE PACKAGES(DEPENDENCIES) THAT IS REQUIRED FOR THE PROJECT                       |
+| --requirements | -r        | Requirements installs the packages(dependencies) that is required for the project                       |
 | --actions      | -a        | Creates a github actions folder and file                                                                |
 | --server       | -s        | Creates the server file for the language you have selected                                              |
 | --url          | -u        | Adds the remote github repository for the new project                                                   |
 
 > ***Note: The create argument does not have any options***
 
-If no language is selected when creating the project directory with -s or -r then the default languate will be selected.
+If no language is selected when creating the project directory with -s or -r then the default language will be selected.
 
 > ***Note:  The default language is Typescript***
  
