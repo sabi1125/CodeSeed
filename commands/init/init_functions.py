@@ -51,19 +51,24 @@ def create_folders(args):
 
 # create files
 def create_files(args):
+    os.chdir('./' + args.foldername)
+    os.system('git init')
+
+    # creating gitignore file
+    if 'git' not in args.ignoreconfig:
+        print("CREATING: gitignore")
+        with open('.gitignore', "w"):
+            pass
+    os.chdir('./src')
+
     if args.language == 'typescript':
-        os.chdir('./' + args.foldername)
-        os.system('git init')
-        os.chdir('./src')
         os.system('npm i typescript --save-dev')
         os.system('npx tsc --init')
         os.chdir('..')
         return 'DONE'
+    
 
     if args.language == 'golang':
-        os.chdir('./' + args.foldername)
-        os.system('git init')
-        os.chdir('./src')
         os.system('go mod init ' + args.foldername)
         os.chdir('..')
         return 'DONE'
@@ -83,6 +88,10 @@ def create_dockerfile(args):
     dockerfile.write('#write you dockerfile here')
     dockerfile.close()
     os.chdir('..')
+    if 'docker' not in args.ignoreconfig:
+        print("CREATING: dockerignore")
+        with open('.dockerignore', "w"):
+            pass
     os.mkdir('scripts')
     os.chdir('scripts')
     file = open('entrypoint.sh', 'x')
