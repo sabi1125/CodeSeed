@@ -10,8 +10,9 @@ Happy Hacking!!
 - [Requirements](#requirements)
 - [Installation](#installation)
     - [The Easy Way](#the-easy-way)
-    - [Linux && Darwin](#linux--darwin)
-    - [Windows](#windows)
+    - [Manually](#manually)
+        - [Linux && Darwin](#linux--darwin)
+        - [Windows](#windows)
 - [Usage](#usage)
 - [Options](#options)
 
@@ -29,12 +30,16 @@ The following is required for manual installation
 
 ## Installation
 
-### Manually
 
 ### The Easy Way
 The easiest way to use CodeSeed is to download OS specific binary from the latest release and add the path to the binary in your `rc` file or if you are on windows, add the path of the codeseed binary to the Environment variables.
 
-### Linux && Darwin
+```
+ export PATH="$HOME/.codeseed:$PATH" 
+ ```
+### Manually
+
+#### Linux && Darwin
 To manually install codeseed you need to have python installed on your computer. Once you have confirmed that you have python installed, you can then clone the codeseed repository and run the `install.sh` file inside of it.
 ```
 git clone https://github.com/sabi1125/CodeSeed.git
@@ -45,7 +50,7 @@ The `install.sh` script will create a `~/.codeseed` binary, you will have to exp
  export PATH="$HOME/.codeseed:$PATH" 
  ```
 
-### Windows
+#### Windows
 Currently the `install.sh` only works with unix like systems for windows run `python3 -m PyInstaller --onefile codeseed.py` this will create a `dist` folder. Add the path to the `dist` folder to your Environment variables and restart your machine and you are good to go.
 
 ## Usage
@@ -76,18 +81,19 @@ codeseed init --language golang --url git@github.com:sabi1125/CodeSeed.git
 
 ## Options
 ### Init argument options:
-| Option         | ShortHand | Description                                                                                             |
-| ------         | --------- | -----------                                                                                             |
-| --language     | -l        | Select the language you want your project to be setup in. Currently only supports golang and typescript |
-| --docker       | -d        | Creates Dockerfile and docker-compose.yml file for your project                                         |
-| --requirements | -r        | Requirements installs the packages(dependencies) that is required for the project                       |
-| --actions      | -a        | Creates a github actions folder and file                                                                |
-| --server       | -s        | Creates the server file for the language you have selected                                              |
-| --url          | -u        | Adds the remote github repository for the new project                                                   |
+| Option          | ShortHand | Description                                                                                             |
+| ------          | --------- | -----------                                                                                             |
+| --language      | -l        | select the language you want your project to be setup in.(options[golang, typescript])                  |
+| --docker        | -d        | creates dockerfile and docker-compose.yml file for your project                                         |
+| --requirements  | -r        | requirements installs the packages(dependencies) that is required for the project                       |
+| --actions       | -a        | creates a github actions folder and file                                                                |
+| --server        | -s        | creates the server file for the language you have selected                                              |
+| --url           | -u        | adds the remote github repository for the new project                                                   |
+| --ignore-config | N/A       | specify the ignore files you dont want to create(options[docker, git])                                  |
+
 
 > ***Note: The create argument does not have any options***
 
 If no language is selected when creating the project directory with -s or -r then the default language will be selected.
 
 > ***Note:  The default language is Typescript***
- 
