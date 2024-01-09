@@ -2,7 +2,7 @@
 FROM ubuntu:latest
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /
 
 # Update the package repository and install any necessary packages
 RUN apt-get update
