@@ -9,6 +9,7 @@ def get_project_config(file_separator):
     current_path = os.getcwd()
     current_path_array = current_path.split(file_separator)
 
+    # find .codeseed.json
     for i in range(len( current_path_array )):
         new_path = file_separator.join(current_path_array)
         codeseed_path = new_path + file_separator + json_file_path
@@ -21,6 +22,7 @@ def get_project_config(file_separator):
 
 # create files for every layer
 def create_files(project_root, filename, project_language, file_separator):
+    # TODO: run create_path only when on windows system
     layer_paths = pathmaker.create_path([
         "/src/controller",
         "/src/repository",

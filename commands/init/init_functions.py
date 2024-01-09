@@ -51,18 +51,27 @@ def create_folders(args):
 
 # create files
 def create_files(args):
+    os.chdir('./' + args.foldername)
+    os.system('git init')
+
+    # creating gitignore file
+    if 'git' not in args.ignoreconfig:
+        print("CREATING: gitignore")
+        with open('.gitignore', "w"):
+            pass
+
     if args.language == 'typescript':
-        os.chdir('./' + args.foldername)
-        os.system('git init')
+        file = open('.gitignore', "w")
+        file.write('src/node_modules')
+        file.close()
         os.chdir('./src')
         os.system('npm i typescript --save-dev')
         os.system('npx tsc --init')
         os.chdir('..')
         return 'DONE'
+    
 
     if args.language == 'golang':
-        os.chdir('./' + args.foldername)
-        os.system('git init')
         os.chdir('./src')
         os.system('go mod init ' + args.foldername)
         os.chdir('..')
@@ -83,6 +92,10 @@ def create_dockerfile(args):
     dockerfile.write('#write you dockerfile here')
     dockerfile.close()
     os.chdir('..')
+    if 'docker' not in args.ignoreconfig:
+        print("CREATING: dockerignore")
+        with open('.dockerignore', "w"):
+            pass
     os.mkdir('scripts')
     os.chdir('scripts')
     file = open('entrypoint.sh', 'x')
@@ -93,8 +106,8 @@ def create_dockerfile(args):
 
 # create serverfile
 def create_server(args):
+    os.chdir('src')
     if args.language == 'typescript':
-        os.chdir('src')
 
         file = open('server.ts', 'x')
         server_code = """
@@ -117,7 +130,6 @@ app.listen(port, () => {
         return 'DONE'
 
     if args.language == 'golang':
-        os.chdir('src')
         file = open('server.go', 'x')
         server_code = """
 package main
@@ -163,32 +175,33 @@ def create_actions(args):
 
 # install dependencies
 def install_dependencies(args):
+    os.chdir('./src')
     if args.language == 'typescript':
-        os.chdir('./src')
+        # TODO: getting dependencies from user
         dependencies = [
-            'npm install express', 
-            'npm install @types/express',
-            'npm install ts-node', 
-            'npm install ts-dotenv',
-            'npm install cors', 
-            'npm install winston',
-            'npm install helmet'
+            'express', 
+            '@types/express',
+            'ts-node', 
+            'ts-dotenv',
+            'cors', 
+            'winston',
+            'helmet'
         ]
         for items in dependencies:
-            os.system(items)
+            os.system('npm install ' + items)
 
         os.chdir('..')
         return 'DONE'
 
     if args.language == 'golang':
-        os.chdir('./src')
+        # TODO: getting dependencies from user
         dependencies = [
-            'go get -u github.com/labstack/echo/v4',
-            'go get -u github.com/francoispqt/onelog',
-            'go get -u gorm.io/gorm'
+            'github.com/labstack/echo/v4',
+            'github.com/francoispqt/onelog',
+            'gorm.io/gorm'
         ]
         for items in dependencies:
-            os.system(items)
+            os.system('go get -u ' + items)
 
         os.chdir('..')
         return 'DONE'
@@ -201,5 +214,3 @@ def add_remote_repository(args):
     print('RUNNING: ' + command)
     os.system(command)
     return 'DONE'
-
-

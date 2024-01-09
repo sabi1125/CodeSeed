@@ -40,6 +40,13 @@ init_parser.add_argument('-u', '--url',
                         dest='url',
                         help='ADD URL TO THE REMOTE REPOSITORY')
 
+init_parser.add_argument('--ignore-config', 
+                         nargs='+',
+                         dest='ignoreconfig',
+                         default='',
+                         choices=['docker', 'git'],
+                         help='SPECIFY THE IGNORE FILES YOU DONOT WANT TO CREATE')
+
 # create command
 create_parser = subparser.add_parser("create", help="initilizes init command")
 create_parser.add_argument("filename", help="add the filename")
