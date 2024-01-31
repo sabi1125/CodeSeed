@@ -3,7 +3,8 @@ flowchart TD
 A(START </br> ENTER SCRIPT)                             --> a
 a(GET OPERATING SYSTEM </br> linux/unix/windows)        --> B
 B{CHECK IF HAS OPTIONS}                                 --> |YES|C
-C{CHECK IF ALL THE OPTIONS ARE VALID}                   --> |YES|D
+C{CHECK IF ALL THE OPTIONS ARE VALID}                   --> |YES|K
+K(CREATE codeseed.json)                                 --> D
 D(EXECUTE SCRIPT WITH OPTIONS)                          --> E
 E{HAS EXECUTION ERROR}                                  --> |YES|F
 F(RETURN EXECUTION ERROR)                               --> Z
