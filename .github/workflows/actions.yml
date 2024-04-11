@@ -20,7 +20,7 @@ jobs:
     - uses: repo-sync/pull-request@v2
       name: pull-request
       with:
-        destination_branch: "v0.2.0-patch"
+        destination_branch: "v0.2.1"
         pr_title: "${{ env.branch }} ${{ github.event.head_commit.message }}"
         pr_body: "The pull request details are written on Linear"
         pr_draft: true
