@@ -8,8 +8,8 @@ parser = argparse.ArgumentParser()
 subparser = parser.add_subparsers(dest="command")
 
 # init command
-init_parser = subparser.add_parser("init", help="initilizes init command")
-init_parser.add_argument("foldername", help="add the foldername")
+init_parser = subparser.add_parser("init", help="INITILIZES INIT COMMAND")
+init_parser.add_argument("foldername", help="ADD THE FOLDERNAME")
 init_parser.add_argument('-l', '--lang', 
                     dest='language',
                     choices=['golang','typescript'],
@@ -48,8 +48,10 @@ init_parser.add_argument('--ignore-config',
                          help='SPECIFY THE IGNORE FILES YOU DONOT WANT TO CREATE')
 
 # create command
-create_parser = subparser.add_parser("create", help="initilizes init command")
-create_parser.add_argument("filename", help="add the filename")
+create_parser = subparser.add_parser("create", help="CREATES CONTROLLER, INTERACTOR AND REPOSITORY FILES")
+create_parser.add_argument("files", 
+                           nargs='+',
+                           help="ADD THE FILENAME OR MULTIPLE FILE NAMES")
 
 args = parser.parse_args()
 args.platform = platform.system()
