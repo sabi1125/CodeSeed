@@ -1,11 +1,14 @@
 import argparse
 import platform
+import os
 
 from commands.init import init
 from commands.create import create
 
 parser = argparse.ArgumentParser()
 subparser = parser.add_subparsers(dest="command")
+# version
+version = parser.add_argument("-v","--version",action="version", version="CodeSeed v0.2.1" ,help="DISPAYS CURRENT INSTALLED CODESEED VERSION")
 
 # init command
 init_parser = subparser.add_parser("init", help="INITILIZES INIT COMMAND")
@@ -53,10 +56,14 @@ create_parser.add_argument("files",
                            nargs='+',
                            help="ADD THE FILENAME OR MULTIPLE FILE NAMES")
 
+
 args = parser.parse_args()
 args.platform = platform.system()
 
+print(version)
 if args.command == "init":
     init.init_command(args)
 elif args.command == "create":
     create.create_command(args)
+elif args.command == "version":
+    print(args)
