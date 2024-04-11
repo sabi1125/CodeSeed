@@ -53,9 +53,10 @@ def create_folders(args):
 def create_files(args):
     os.chdir('./' + args.foldername)
     os.system('git init')
+    os.system('git branch -M main')
 
     # creating gitignore file
-    if 'git' not in args.ignoreconfig:
+    if 'git' in args.ignoreconfig:
         print("CREATING: gitignore")
         with open('.gitignore', "w"):
             pass
@@ -92,7 +93,7 @@ def create_dockerfile(args):
     dockerfile.write('#write you dockerfile here')
     dockerfile.close()
     os.chdir('..')
-    if 'docker' not in args.ignoreconfig:
+    if 'docker' in args.ignoreconfig:
         print("CREATING: dockerignore")
         with open('.dockerignore', "w"):
             pass
