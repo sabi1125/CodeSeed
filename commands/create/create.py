@@ -8,13 +8,12 @@ def create_command(args):
     for filename in args.files:
         file_separator = separator.get_platform_separator()
         config = functions.get_project_config(file_separator)
-        print(filename)
 
         if config == False:
             print('NOT A CODESEED PROJECT')
             return
 
-        create_files = functions.create_files(config["root"], filename, config["language"], file_separator)
+        create_files = functions.create_files(config["root"], filename, config["language"], file_separator, args.withtest)
         if create_files == "DONE":
             print("CREATED: " + create_files)
         else:
