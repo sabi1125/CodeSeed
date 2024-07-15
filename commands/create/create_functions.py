@@ -21,7 +21,7 @@ def get_project_config(file_separator):
     return False
 
 # create files for every layer
-def create_files(project_root, filename, project_language, file_separator):
+def create_files(project_root, filename, project_language, file_separator, with_test):
     # TODO: run create_path only when on windows system
     layer_paths = pathmaker.create_path([
         "/src/controller",
@@ -38,8 +38,12 @@ def create_files(project_root, filename, project_language, file_separator):
 
         if project_language == "golang":
             new_layer_path = base_path + filename + "_" + basename + ".go"
+            if with_test:
+                test_layer_path = base_path + filename + "_" + basename + "_" + "test.go"
         else:
             new_layer_path =  base_path + filename + basename.capitalize() + ".ts"
+            if with_test:
+                test_layer_path = base_path + filename + basename.capitalize() + "Test.ts"
 
         if os.path.exists(new_layer_path):
             return new_layer_path
@@ -47,4 +51,9 @@ def create_files(project_root, filename, project_language, file_separator):
         print("CREATING: " + new_layer_path)
         with open(new_layer_path, "w"):
             pass
+
+        if with_test:
+            print("CREATING: " + test_layer_path)
+            with open(test_layer_path, "w"):
+                pass
     return "DONE"

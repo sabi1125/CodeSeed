@@ -1,15 +1,18 @@
 import argparse
 import platform
+import os
 
 from commands.init import init
 from commands.create import create
 
 parser = argparse.ArgumentParser()
 subparser = parser.add_subparsers(dest="command")
+# version
+version = parser.add_argument("-v","--version", action="version", version="CodeSeed v0.2.1" ,help="DISPAYS CURRENT INSTALLED CODESEED VERSION")
 
 # init command
-init_parser = subparser.add_parser("init", help="initilizes init command")
-init_parser.add_argument("foldername", help="add the foldername")
+init_parser = subparser.add_parser("init", help="INITILIZES INIT COMMAND")
+init_parser.add_argument("foldername", help="ADD THE FOLDERNAME")
 init_parser.add_argument('-l', '--lang', 
                     dest='language',
                     choices=['golang','typescript'],
@@ -48,8 +51,17 @@ init_parser.add_argument('--ignore-config',
                          help='SPECIFY THE IGNORE FILES YOU DONOT WANT TO CREATE')
 
 # create command
-create_parser = subparser.add_parser("create", help="initilizes init command")
-create_parser.add_argument("filename", help="add the filename")
+create_parser = subparser.add_parser("create", help="CREATES CONTROLLER, INTERACTOR AND REPOSITORY FILES")
+create_parser.add_argument("files", 
+                           nargs='+',
+                           help="ADD THE FILENAME OR MULTIPLE FILE NAMES")
+
+create_parser.add_argument('--with-test',
+                           action='store_true',
+                           dest='withtest',
+                           help='CREATE FILES WITH TEST FILES'
+                           )
+
 
 args = parser.parse_args()
 args.platform = platform.system()
@@ -58,3 +70,5 @@ if args.command == "init":
     init.init_command(args)
 elif args.command == "create":
     create.create_command(args)
+elif args.command == "version":
+    print(args)
