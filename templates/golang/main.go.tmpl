@@ -3,10 +3,15 @@ package main
 import (
 	"net/http"
 
+	"${module}/internal/log"
+
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
+	logger.Init()
+	defer logger.Sync()
+
 	// Create an Echo instance
 	e := echo.New()
 
@@ -16,5 +21,6 @@ func main() {
 	})
 
 	// Start the server
+	logger.Info("starting server")
 	e.Logger.Fatal(e.Start(":8080"))
 }
