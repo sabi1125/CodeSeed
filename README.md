@@ -56,8 +56,10 @@ The `install.sh` script will create a `~/.codeseed` binary, you will have to exp
  ```
 
 #### Windows
-Currently the `install.sh` only works with unix like systems for windows run `python3 -m PyInstaller --onefile codeseed.py` 
+Currently the `install.sh` only works with unix like systems for windows run `python3 -m PyInstaller --onefile --add-data "templates;templates" codeseed.py`
 this will create a `dist` folder. Add the path to the `dist` folder to your Environment variables and restart your machine and you are good to go.
+
+> [!NOTE] *The `--add-data` flag is required — codeseed's generated file content lives in `templates/`, not hardcoded in the script, so the binary needs it bundled to work.*
 
 ## Usage
 Using CodeSeed is very easy. You just need to call codeseed on your terminal and add the name of the Backend project you want to create. Like the following.
@@ -84,6 +86,30 @@ codeseed init --language golang --url git@github.com:sabi1125/CodeSeed.git
 | ------     | ------------------------------------------------------- | ------------------------------------------ |
 | init       | Creates new project                                     | `codeseed init <project-name> --<options>` |
 | create     | Creates the controller, interactor and repository files | `codeseed create <filename>`               |
+
+### Project layout by language
+
+**typescript** keeps the original flat layout: everything under `src/` (`src/controller`, `src/repository`, `src/interfaces/interactor`, ...).
+
+**golang** does not use a `src/` layer — `go.mod` and `cmd/<project-name>/main.go` live at the project root, matching normal Go convention:
+
+```
+cmd/<project-name>/main.go
+internal/
+  controller/
+  domain/
+    entities/
+    interactor/
+      inputport/
+        mock/
+    repository/
+      inputport/
+        mock/
+  infrastructure/
+  response/
+  log/
+  util/
+```
 
 ## Options
 ### Init argument options:
