@@ -1,7 +1,7 @@
 #!/bin/bash
 
-file_to_check = "./dist"
-second_file_to_check = "./build"
+file_to_check="./dist"
+second_file_to_check="./build"
 
 if [ -e "$file_to_check" ]; then
     echo "Your binary has already been built"
@@ -9,6 +9,6 @@ elif [ -e "$second_file_to_check" ]; then
     echo "Your binary has already been built"
 else
     pip3 install -r requirements.txt
-    mkdir ~/.codeseed
-    python3 -m PyInstaller --distpath=~/.codeseed --onefile codeseed.py
+    mkdir -p ~/.codeseed
+    python3 -m PyInstaller --distpath=~/.codeseed --onefile --add-data "templates:templates" codeseed.py
 fi
