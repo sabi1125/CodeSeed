@@ -143,6 +143,12 @@ def create_dockerfile(args):
     os.chdir('..')
     return 'DONE'
 
+# create database connection boilerplate (golang only)
+def create_database(args):
+    with open('internal/infrastructure/database.go', 'x') as file:
+        file.write(templates.render('golang/database.go.tmpl'))
+    return 'DONE'
+
 # create serverfile
 def create_server(args):
     if args.language == 'golang':
