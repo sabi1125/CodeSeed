@@ -39,6 +39,7 @@ def create_folders(args):
             '/internal/infrastructure',
             '/internal/response',
             '/internal/log',
+            '/internal/tx',
             '/internal/util'
         ]
     else:
@@ -150,10 +151,19 @@ def create_database(args):
         file.write(templates.render('golang/database.go.tmpl'))
     return 'DONE'
 
-# create transaction manager boilerplate (golang only)
+# create transaction manager boilerplate (golang only). Manager lives in its
+# own internal/tx package (interface only) so the domain layer can depend on
+# it without importing internal/infrastructure — same split as
+# interactor/repository inputport.
+def create_tx_manager(args):
+    with open('internal/tx/manager.go', 'x') as file:
+        file.write(templates.render('golang/tx_manager.go.tmpl'))
+    return 'DONE'
+
+
 def create_transaction(args):
     with open('internal/infrastructure/transaction.go', 'x') as file:
-        file.write(templates.render('golang/transaction.go.tmpl'))
+        file.write(templates.render('golang/transaction.go.tmpl', module=args.foldername))
     return 'DONE'
 
 # create serverfile
