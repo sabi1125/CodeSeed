@@ -15,6 +15,14 @@ def init_command(args):
         return
     print('CREATING FILES: ' + files)
 
+    # create database connection boilerplate (golang only — same setup every project)
+    if args.language == 'golang':
+        database = functions.create_database(args)
+        if database != 'DONE':
+            print('PROBLEM CREATING DATABASE FILE')
+            return
+        print('CREATING DATABASE FILE: ' + database)
+
     # create docker files
     if args.docker:
         dockerfile = functions.create_dockerfile(args)

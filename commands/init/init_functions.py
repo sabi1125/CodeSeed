@@ -1,6 +1,8 @@
 import os
 import json
 
+from utils import templates
+
 def create_dotfiles(args):
     config = {
         "language": args.language,
@@ -14,16 +16,41 @@ def create_dotfiles(args):
 
 # create folders
 def create_folders(args):
-    folder_paths = [
-        '/src', 
-        '/src/controller',
-        '/src/domain',
-        '/src/interfaces',
-        '/src/infrastructure',
-        '/src/interfaces/interactor',
-        '/src/repository',
-        '/src/model'
-    ]
+    if args.language == 'golang':
+        # golang doesn't use a src/ layer — go.mod and cmd/ live at project root.
+        # domain/interactor and domain/repository each carry an inputport/ (the
+        # interface the layer above depends on, not the concrete type) plus an
+        # inputport/mock/ for generated mocks — dependency inversion, not just
+        # controller/interactor/repository as flat siblings.
+        folder_paths = [
+            '/cmd',
+            '/cmd/' + args.foldername,
+            '/internal',
+            '/internal/controller',
+            '/internal/domain',
+            '/internal/domain/entities',
+            '/internal/domain/interactor',
+            '/internal/domain/interactor/inputport',
+            '/internal/domain/interactor/inputport/mock',
+            '/internal/domain/repository',
+            '/internal/domain/repository/inputport',
+            '/internal/domain/repository/inputport/mock',
+            '/internal/infrastructure',
+            '/internal/response',
+            '/internal/log',
+            '/internal/util'
+        ]
+    else:
+        folder_paths = [
+            '/src',
+            '/src/controller',
+            '/src/domain',
+            '/src/interfaces',
+            '/src/infrastructure',
+            '/src/interfaces/interactor',
+            '/src/repository',
+            '/src/model'
+        ]
 
     list_of_directory = os.listdir("./")
     dir_already_exists = False
@@ -58,8 +85,12 @@ def create_files(args):
     # creating gitignore file
     if 'git' in args.ignoreconfig:
         print("CREATING: gitignore")
-        with open('.gitignore', "w"):
-            pass
+        if args.language == 'golang':
+            with open('.gitignore', "w") as file:
+                file.write(templates.render('golang/gitignore.tmpl', foldername=args.foldername))
+        else:
+            with open('.gitignore', "w"):
+                pass
 
     if args.language == 'typescript':
         file = open('.gitignore', "w")
@@ -70,16 +101,21 @@ def create_files(args):
         os.system('npx tsc --init')
         os.chdir('..')
         return 'DONE'
-    
+
 
     if args.language == 'golang':
-        os.chdir('./src')
         os.system('go mod init ' + args.foldername)
-        os.chdir('..')
         return 'DONE'
 
 
     return 'UNEXPECTED ERROR ENCOUNTERED'
+
+
+# create database connection boilerplate (golang only)
+def create_database(args):
+    with open('internal/infrastructure/database.go', 'x') as file:
+        file.write(templates.render('golang/database.go.tmpl'))
+    return 'DONE'
 
 
 # create dockerfile
@@ -90,7 +126,10 @@ def create_dockerfile(args):
     os.chdir('docker')
 
     dockerfile = open('DOCKERFILE', 'x')
-    dockerfile.write('#write you dockerfile here')
+    if args.language == 'golang':
+        dockerfile.write(templates.render('golang/Dockerfile.tmpl', foldername=args.foldername))
+    else:
+        dockerfile.write('#write you dockerfile here')
     dockerfile.close()
     os.chdir('..')
     if 'docker' in args.ignoreconfig:
@@ -99,14 +138,26 @@ def create_dockerfile(args):
             pass
     os.mkdir('scripts')
     os.chdir('scripts')
-    file = open('entrypoint.sh', 'x')
-    file.write('// script file')
-    file.close()
+    if args.language == 'golang':
+        file = open('entrypoint.sh', 'x')
+        file.write(templates.render('golang/entrypoint.sh.tmpl'))
+        file.close()
+    else:
+        file = open('entrypoint.sh', 'x')
+        file.write('// script file')
+        file.close()
     os.chdir('..')
     return 'DONE'
 
 # create serverfile
 def create_server(args):
+    if args.language == 'golang':
+        os.chdir('cmd/' + args.foldername)
+        with open('main.go', 'x') as file:
+            file.write(templates.render('golang/main.go.tmpl'))
+        os.chdir('../..')
+        return 'DONE'
+
     os.chdir('src')
     if args.language == 'typescript':
 
@@ -130,35 +181,6 @@ app.listen(port, () => {
         os.chdir('..')
         return 'DONE'
 
-    if args.language == 'golang':
-        file = open('server.go', 'x')
-        server_code = """
-package main
-
-import (
-    "net/http"
-
-    "github.com/labstack/echo/v4"
-)
-
-func main() {
-    // Create an Echo instance
-    e := echo.New()
-
-    // Define a route
-    e.GET("/", func(c echo.Context) error {
-        return c.String(http.StatusOK, "Hello, Echo!")
-    })
-
-    // Start the server
-    e.Start(":8080")
-}
-"""
-        file.write(server_code) 
-        file.close()
-        os.chdir('..')
-        return 'DONE'
-
     return 'UNEXPECTED ERROR ENCOUNTERED'
 
 # create actions
@@ -176,33 +198,33 @@ def create_actions(args):
 
 # install dependencies
 def install_dependencies(args):
-    os.chdir('./src')
-    if args.language == 'typescript':
-        # TODO: getting dependencies from user
-        dependencies = [
-            'express', 
-            '@types/express',
-            'ts-node', 
-            'ts-dotenv',
-            'cors', 
-            'winston',
-            'helmet'
-        ]
-        for items in dependencies:
-            os.system('npm install ' + items)
-
-        os.chdir('..')
-        return 'DONE'
-
     if args.language == 'golang':
         # TODO: getting dependencies from user
         dependencies = [
             'github.com/labstack/echo/v4',
             'github.com/francoispqt/onelog',
-            'gorm.io/gorm'
+            'gorm.io/gorm',
+            'gorm.io/driver/mysql'
         ]
         for items in dependencies:
             os.system('go get -u ' + items)
+
+        return 'DONE'
+
+    os.chdir('./src')
+    if args.language == 'typescript':
+        # TODO: getting dependencies from user
+        dependencies = [
+            'express',
+            '@types/express',
+            'ts-node',
+            'ts-dotenv',
+            'cors',
+            'winston',
+            'helmet'
+        ]
+        for items in dependencies:
+            os.system('npm install ' + items)
 
         os.chdir('..')
         return 'DONE'

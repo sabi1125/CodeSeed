@@ -1,0 +1,15 @@
+package controller
+
+import (
+	"${module}/internal/domain/interactor/inputport"
+)
+
+type ${type_name}Controller struct {
+	${var_name}Interactor inputport.${type_name}InteractorInputPort
+}
+
+func New${type_name}Controller(${var_name}Interactor inputport.${type_name}InteractorInputPort) *${type_name}Controller {
+	return &${type_name}Controller{
+		${var_name}Interactor: ${var_name}Interactor,
+	}
+}

@@ -56,8 +56,10 @@ The `install.sh` script will create a `~/.codeseed` binary, you will have to exp
  ```
 
 #### Windows
-Currently the `install.sh` only works with unix like systems for windows run `python3 -m PyInstaller --onefile codeseed.py` 
+Currently the `install.sh` only works with unix like systems for windows run `python3 -m PyInstaller --onefile --add-data "templates;templates" codeseed.py`
 this will create a `dist` folder. Add the path to the `dist` folder to your Environment variables and restart your machine and you are good to go.
+
+> [!NOTE] *The `--add-data` flag is required — codeseed's generated file content lives in `templates/`, not hardcoded in the script, so the binary needs it bundled to work.*
 
 ## Usage
 Using CodeSeed is very easy. You just need to call codeseed on your terminal and add the name of the Backend project you want to create. Like the following.
@@ -83,7 +85,33 @@ codeseed init --language golang --url git@github.com:sabi1125/CodeSeed.git
 | Argument   | Description                                             | Useage                                     |
 | ------     | ------------------------------------------------------- | ------------------------------------------ |
 | init       | Creates new project                                     | `codeseed init <project-name> --<options>` |
-| create     | Creates the controller, interactor and repository files | `codeseed create <filename>`               |
+| create     | Creates the controller, interactor and repository files (golang: plus their `inputport` interfaces and `entities`) | `codeseed create <filename>` |
+
+### Project layout by language
+
+**typescript** keeps the original flat layout: everything under `src/` (`src/controller`, `src/repository`, `src/interfaces/interactor`, ...).
+
+**golang** does not use a `src/` layer — `go.mod` and `cmd/<project-name>/main.go` live at the project root, matching normal Go convention. `create` generates a small dependency-inversion layout, not flat siblings:
+
+```
+cmd/<project-name>/main.go
+internal/
+  controller/
+  domain/
+    entities/
+    interactor/
+      inputport/        # the interface the layer above depends on
+        mock/            # generated mocks land here (go:generate mockgen, go.uber.org/mock)
+    repository/
+      inputport/
+        mock/
+  infrastructure/       # includes a generated database.go (GORM + MySQL, reads DB_* env vars)
+  response/
+  log/
+  util/
+```
+
+`codeseed create <name>` fills in a struct + constructor + empty interface per layer — method bodies are yours to write, not generated. `-d`/`--docker` produces a real, working multistage `Dockerfile` for golang (not a placeholder), and `--ignore-config git` writes a real `.gitignore` (binary name, `.env`, `vendor/`).
 
 ## Options
 ### Init argument options:
