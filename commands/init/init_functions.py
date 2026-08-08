@@ -150,6 +150,12 @@ def create_database(args):
         file.write(templates.render('golang/database.go.tmpl'))
     return 'DONE'
 
+# create transaction manager boilerplate (golang only)
+def create_transaction(args):
+    with open('internal/infrastructure/transaction.go', 'x') as file:
+        file.write(templates.render('golang/transaction.go.tmpl'))
+    return 'DONE'
+
 # create serverfile
 def create_server(args):
     if args.language == 'golang':

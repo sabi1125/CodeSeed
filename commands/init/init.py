@@ -23,6 +23,14 @@ def init_command(args):
             return
         print('CREATING DATABASE FILE: ' + database)
 
+    # create transaction manager boilerplate (golang only — same setup every project)
+    if args.language == 'golang':
+        transaction = functions.create_transaction(args)
+        if transaction != 'DONE':
+            print('PROBLEM CREATING TRANSACTION FILE')
+            return
+        print('CREATING TRANSACTION FILE: ' + transaction)
+
     # create logger boilerplate (golang only — same setup every project)
     if args.language == 'golang':
         logger = functions.create_logger(args)
