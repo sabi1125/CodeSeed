@@ -85,19 +85,20 @@ def create_files(args):
     # creating gitignore file
     if 'git' in args.ignoreconfig:
         print("CREATING: gitignore")
-        with open('.gitignore', "w"):
-            pass
+        if args.language == 'golang':
+            gitignore_content = templates.render('golang/gitignore.tmpl', foldername=args.foldername)
+        else:
+            gitignore_content = templates.render('typescript/gitignore.tmpl')
+        with open('.gitignore', "w") as file:
+            file.write(gitignore_content)
 
     if args.language == 'typescript':
-        file = open('.gitignore', "w")
-        file.write('src/node_modules')
-        file.close()
         os.chdir('./src')
         os.system('npm i typescript --save-dev')
         os.system('npx tsc --init')
         os.chdir('..')
         return 'DONE'
-    
+
 
     if args.language == 'golang':
         os.system('go mod init ' + args.foldername)
@@ -110,12 +111,17 @@ def create_files(args):
 # create dockerfile
 def create_dockerfile(args):
     docker_compose_file = open('docker-compose.yml', 'x')
-    docker_compose_file.write('#write your docker compose file here')
+    docker_compose_file.write(templates.render('shared/docker-compose.yml.tmpl'))
     docker_compose_file.close()
     os.chdir('docker')
 
+    if args.language == 'golang':
+        dockerfile_content = templates.render('golang/Dockerfile.tmpl', foldername=args.foldername)
+    else:
+        dockerfile_content = templates.render('typescript/Dockerfile.tmpl')
+
     dockerfile = open('DOCKERFILE', 'x')
-    dockerfile.write('#write you dockerfile here')
+    dockerfile.write(dockerfile_content)
     dockerfile.close()
     os.chdir('..')
     if 'docker' in args.ignoreconfig:
@@ -125,7 +131,7 @@ def create_dockerfile(args):
     os.mkdir('scripts')
     os.chdir('scripts')
     file = open('entrypoint.sh', 'x')
-    file.write('// script file')
+    file.write(templates.render('shared/entrypoint.sh.tmpl'))
     file.close()
     os.chdir('..')
     return 'DONE'
@@ -143,21 +149,7 @@ def create_server(args):
     if args.language == 'typescript':
 
         file = open('server.ts', 'x')
-        server_code = """
-import express from 'express';
-
-const app = express();
-const port = 3000;
-
-app.get('/', (req, res) => {
-  res.send('Hello, Express!');
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-        """
-        file.write(server_code)
+        file.write(templates.render('typescript/server.ts.tmpl'))
         file.close()
         os.chdir('..')
         return 'DONE'
@@ -170,7 +162,7 @@ def create_actions(args):
     os.mkdir('.github/workflows')
     os.chdir('.github/workflows')
     file = open('actions.yml', 'x')
-    file.write('# your github-actions go here')
+    file.write(templates.render('shared/actions.yml.tmpl'))
     file.close()
     os.chdir('..')
     os.chdir('..')
