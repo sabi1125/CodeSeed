@@ -85,7 +85,7 @@ codeseed init --language golang --url git@github.com:sabi1125/CodeSeed.git
 | Argument   | Description                                             | Useage                                     |
 | ------     | ------------------------------------------------------- | ------------------------------------------ |
 | init       | Creates new project                                     | `codeseed init <project-name> --<options>` |
-| create     | Creates the controller, interactor and repository files | `codeseed create <filename>`               |
+| create     | Creates the controller, interactor and repository files (golang: plus their `inputport` interfaces and `entities`) | `codeseed create <filename>` |
 
 ### Project layout by language
 
@@ -110,6 +110,8 @@ internal/
   log/
   util/
 ```
+
+`codeseed create <name>` fills in a struct + constructor + empty interface per layer — method bodies are yours to write, not generated. The `inputport/` files carry a `go:generate mockgen` directive (`go.uber.org/mock`) so a mock is one `go generate ./...` away once the interface has methods on it.
 
 ## Options
 ### Init argument options:
