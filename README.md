@@ -56,8 +56,10 @@ The `install.sh` script will create a `~/.codeseed` binary, you will have to exp
  ```
 
 #### Windows
-Currently the `install.sh` only works with unix like systems for windows run `python3 -m PyInstaller --onefile codeseed.py` 
+Currently the `install.sh` only works with unix like systems for windows run `python3 -m PyInstaller --onefile --add-data "templates;templates" codeseed.py`
 this will create a `dist` folder. Add the path to the `dist` folder to your Environment variables and restart your machine and you are good to go.
+
+> [!NOTE] *The `--add-data` flag is required — codeseed's generated file content lives in `templates/`, not hardcoded in the script, so the binary needs it bundled to work.*
 
 ## Usage
 Using CodeSeed is very easy. You just need to call codeseed on your terminal and add the name of the Backend project you want to create. Like the following.
@@ -83,7 +85,55 @@ codeseed init --language golang --url git@github.com:sabi1125/CodeSeed.git
 | Argument   | Description                                             | Useage                                     |
 | ------     | ------------------------------------------------------- | ------------------------------------------ |
 | init       | Creates new project                                     | `codeseed init <project-name> --<options>` |
-| create     | Creates the controller, interactor and repository files | `codeseed create <filename>`               |
+| create     | Creates the controller, interactor and repository files (golang: plus their `inputport` interfaces and `entities`) | `codeseed create <filename>` |
+| remove     | Deletes a resource's layer files (golang only)          | `codeseed remove [<name>]`                 |
+| update     | Renames a resource's files and identifiers (golang only)| `codeseed update [--from <name>] [--to <new-name>]` |
+
+### Project layout by language
+
+**typescript** keeps the original flat layout: everything under `src/` (`src/controller`, `src/repository`, `src/interfaces/interactor`, ...).
+
+**golang** does not use a `src/` layer — `go.mod` and `cmd/<project-name>/main.go` live at the project root, matching normal Go convention:
+
+```
+cmd/<project-name>/main.go
+internal/
+  controller/
+  domain/
+    entities/
+    interactor/
+      inputport/
+        mock/
+    repository/
+      inputport/
+        mock/
+  infrastructure/
+  response/
+  log/           # generated logger.go — zap, configured via LOG_LEVEL/APP_ENV env vars
+  util/
+```
+
+`codeseed create <name>` fills in a struct + constructor + empty interface per layer — method bodies are yours to write, not generated. The `inputport/` files carry a `go:generate mockgen` directive (`go.uber.org/mock`) so a mock is one `go generate ./...` away once the interface has methods on it.
+
+`internal/infrastructure/` is generated with a `database.go` (GORM + MySQL connection via `DB_*` env vars) on every golang init.
+
+### remove and update (golang only)
+
+`codeseed create` tracks the last 5 resource names in `.codeseed.json` (`recent_resources`), so `remove` and `update` don't require retyping an exact name — run them with no arguments and pick a number from a list instead:
+
+```sh
+codeseed remove
+# SELECT A RESOURCE:
+#   1) problem
+#   2) submission
+# Enter number:
+```
+
+`codeseed update` renames the layer files for a resource and rewrites the identifiers inside them (`ProblemInteractor` -> `WidgetInteractor`, etc.) — content you've already written in those files is preserved, only the exact old identifiers get swapped. It does **not** chase references to the old name in other files (e.g. wiring in `main.go`) — you'll get a note printed if that applies.
+
+Both accept explicit args too, skipping the picker: `codeseed remove <name>`, `codeseed update --from <name> --to <new-name>`.
+
+> [!NOTE] *Only the last 5 created resources are tracked — anything older still exists on disk, you just have to pass its name explicitly instead of picking it from the list.*
 
 ## Options
 ### Init argument options:

@@ -1,0 +1,15 @@
+package interactor
+
+import (
+	"${module}/internal/domain/repository/inputport"
+)
+
+type ${type_name}Interactor struct {
+	${var_name}Repository inputport.${type_name}RepositoryInputPort
+}
+
+func New${type_name}Interactor(${var_name}Repository inputport.${type_name}RepositoryInputPort) *${type_name}Interactor {
+	return &${type_name}Interactor{
+		${var_name}Repository: ${var_name}Repository,
+	}
+}

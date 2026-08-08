@@ -15,6 +15,36 @@ def init_command(args):
         return
     print('CREATING FILES: ' + files)
 
+    # create database connection boilerplate (golang only — same setup every project)
+    if args.language == 'golang':
+        database = functions.create_database(args)
+        if database != 'DONE':
+            print('PROBLEM CREATING DATABASE FILE')
+            return
+        print('CREATING DATABASE FILE: ' + database)
+
+    # create transaction manager boilerplate (golang only — same setup every project)
+    if args.language == 'golang':
+        tx_manager = functions.create_tx_manager(args)
+        if tx_manager != 'DONE':
+            print('PROBLEM CREATING TRANSACTION MANAGER INTERFACE FILE')
+            return
+        print('CREATING TRANSACTION MANAGER INTERFACE FILE: ' + tx_manager)
+
+        transaction = functions.create_transaction(args)
+        if transaction != 'DONE':
+            print('PROBLEM CREATING TRANSACTION FILE')
+            return
+        print('CREATING TRANSACTION FILE: ' + transaction)
+
+    # create logger boilerplate (golang only — same setup every project)
+    if args.language == 'golang':
+        logger = functions.create_logger(args)
+        if logger != 'DONE':
+            print('PROBLEM CREATING LOGGER FILE')
+            return
+        print('CREATING LOGGER FILE: ' + logger)
+
     # create docker files
     if args.docker:
         dockerfile = functions.create_dockerfile(args)
