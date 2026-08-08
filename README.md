@@ -107,7 +107,7 @@ internal/
         mock/
   infrastructure/
   response/
-  log/
+  log/           # generated logger.go — zap, configured via LOG_LEVEL/APP_ENV env vars
   util/
 ```
 

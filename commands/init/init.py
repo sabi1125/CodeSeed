@@ -15,6 +15,14 @@ def init_command(args):
         return
     print('CREATING FILES: ' + files)
 
+    # create logger boilerplate (golang only — same setup every project)
+    if args.language == 'golang':
+        logger = functions.create_logger(args)
+        if logger != 'DONE':
+            print('PROBLEM CREATING LOGGER FILE')
+            return
+        print('CREATING LOGGER FILE: ' + logger)
+
     # create docker files
     if args.docker:
         dockerfile = functions.create_dockerfile(args)
