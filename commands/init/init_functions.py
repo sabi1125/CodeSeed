@@ -8,6 +8,7 @@ def create_dotfiles(args):
         "language": args.language,
         "root": os.getcwd(),
         "remote": args.url,
+        "recent_resources": [],
     }
     with open('.codeseed.json', "w") as json_file:
         json.dump(config, json_file, indent=4)  # indent is optional, but it makes the file more readable

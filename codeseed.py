@@ -4,6 +4,8 @@ import os
 
 from commands.init import init
 from commands.create import create
+from commands.remove import remove
+from commands.update import update
 
 parser = argparse.ArgumentParser()
 subparser = parser.add_subparsers(dest="command")
@@ -62,6 +64,24 @@ create_parser.add_argument('--with-test',
                            help='CREATE FILES WITH TEST FILES'
                            )
 
+# remove command
+remove_parser = subparser.add_parser("remove", help="REMOVES A RESOURCE'S CONTROLLER, INTERACTOR AND REPOSITORY FILES")
+remove_parser.add_argument("name",
+                           nargs='?',
+                           default=None,
+                           help="RESOURCE NAME TO REMOVE — OMIT TO PICK FROM THE LAST 5 CREATED")
+
+# update command
+update_parser = subparser.add_parser("update", help="RENAMES A RESOURCE'S FILES AND THE IDENTIFIERS INSIDE THEM")
+update_parser.add_argument('--from',
+                           dest='rename_from',
+                           default=None,
+                           help="EXISTING RESOURCE NAME — OMIT TO PICK FROM THE LAST 5 CREATED")
+update_parser.add_argument('--to',
+                           dest='rename_to',
+                           default=None,
+                           help="NEW RESOURCE NAME — OMIT TO BE PROMPTED")
+
 
 args = parser.parse_args()
 args.platform = platform.system()
@@ -70,5 +90,9 @@ if args.command == "init":
     init.init_command(args)
 elif args.command == "create":
     create.create_command(args)
+elif args.command == "remove":
+    remove.remove_command(args)
+elif args.command == "update":
+    update.update_command(args)
 elif args.command == "version":
     print(args)
