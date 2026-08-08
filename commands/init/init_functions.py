@@ -108,6 +108,13 @@ def create_files(args):
     return 'UNEXPECTED ERROR ENCOUNTERED'
 
 
+# create logger boilerplate (golang only — same setup every project)
+def create_logger(args):
+    with open('internal/log/logger.go', 'x') as file:
+        file.write(templates.render('golang/logger.go.tmpl'))
+    return 'DONE'
+
+
 # create dockerfile
 def create_dockerfile(args):
     docker_compose_file = open('docker-compose.yml', 'x')
@@ -177,7 +184,8 @@ def install_dependencies(args):
             'github.com/labstack/echo/v4',
             'github.com/francoispqt/onelog',
             'gorm.io/gorm',
-            'gorm.io/driver/mysql'
+            'gorm.io/driver/mysql',
+            'go.uber.org/zap'
         ]
         for items in dependencies:
             os.system('go get -u ' + items)
