@@ -113,6 +113,8 @@ internal/
 
 `codeseed create <name>` fills in a struct + constructor + empty interface per layer — method bodies are yours to write, not generated. The `inputport/` files carry a `go:generate mockgen` directive (`go.uber.org/mock`) so a mock is one `go generate ./...` away once the interface has methods on it.
 
+`internal/infrastructure/` is generated with a `database.go` (GORM + MySQL connection via `DB_*` env vars) on every golang init.
+
 ## Options
 ### Init argument options:
 | Option          | ShortHand | Description                                                                                             |
