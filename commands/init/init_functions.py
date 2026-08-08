@@ -155,7 +155,7 @@ def create_server(args):
     if args.language == 'golang':
         os.chdir('cmd/' + args.foldername)
         with open('main.go', 'x') as file:
-            file.write(templates.render('golang/main.go.tmpl'))
+            file.write(templates.render('golang/main.go.tmpl', module=args.foldername))
         os.chdir('../..')
         return 'DONE'
 
