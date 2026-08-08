@@ -1,0 +1,39 @@
+package infrastructure
+
+import (
+	"context"
+
+	"${module}/internal/tx"
+
+	"gorm.io/gorm"
+)
+
+type contextKey string
+
+const txKey contextKey = "gorm_tx"
+
+type TransactionManager struct {
+	db *gorm.DB
+}
+
+func NewTransactionManager(db *gorm.DB) tx.Manager {
+	return &TransactionManager{
+		db: db,
+	}
+}
+
+func (m *TransactionManager) WithinTransaction(ctx context.Context, fn func(ctx context.Context) error) error {
+	return m.db.WithContext(ctx).Transaction(func(gormTx *gorm.DB) error {
+		txCtx := context.WithValue(ctx, txKey, gormTx)
+		return fn(txCtx)
+	})
+}
+
+// ExtractTx returns the transaction-scoped *gorm.DB stashed in ctx by
+// WithinTransaction, or nil if there isn't one — callers fall back to their
+// own db when nil, so repository methods work the same whether or not
+// they're running inside a transaction.
+func ExtractTx(ctx context.Context) *gorm.DB {
+	gormTx, _ := ctx.Value(txKey).(*gorm.DB)
+	return gormTx
+}
