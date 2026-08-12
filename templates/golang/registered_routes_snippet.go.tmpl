@@ -1,0 +1,12 @@
+
+func Registered${type_name}Routes(e *echo.Echo, db *gorm.DB) {
+	${var_name} := e.Group("/${var_name}")
+	repository := repository.New${type_name}Repository(db)
+	interactor := interactor.New${type_name}Interactor(repository)
+	controller := controller.New${type_name}Controller(interactor)
+
+	// TODO: register routes, e.g. ${var_name}.GET("", controller.SomeMethod)
+	// Safe to leave the two lines below even after adding real routes.
+	_ = ${var_name}
+	_ = controller
+}

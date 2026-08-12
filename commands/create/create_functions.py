@@ -105,8 +105,44 @@ def _create_golang_files(project_root, filename, file_separator, with_test, conf
             with open(test_path, "w") as f:
                 f.write("package " + target["package"] + "\n")
 
+    append_routes_function(project_root, filename, file_separator)
     record_recent_resource(config, config_path, filename)
     return "DONE"
+
+
+# appends a Registered{TypeName}Routes function to internal/infrastructure/
+# router.go — bootstraps router.go from router_base.go.tmpl first if it
+# doesn't exist yet (e.g. a project that never ran `init --initial-setup`).
+# Only ever appends: never rewrites/reorders existing content, and skips
+# instead of duplicating if the function is already there (re-running
+# `create` on the same name, or a resource --initial-setup already wired).
+# Wiring the call into Router(e, db) itself is still a manual step — same
+# as fixing the default "/${var_name}" group prefix if it's not the one
+# you actually want.
+def append_routes_function(project_root, filename, file_separator):
+    module = os.path.basename(project_root.rstrip(file_separator))
+    type_name = filename.capitalize()
+    var_name = filename
+
+    router_path = project_root + file_separator + "internal" + file_separator + "infrastructure" + file_separator + "router.go"
+
+    if not os.path.exists(router_path):
+        print("CREATING: " + router_path)
+        with open(router_path, "w") as f:
+            f.write(templates.render("golang/router_base.go.tmpl", module=module))
+
+    with open(router_path, "r") as f:
+        router_content = f.read()
+
+    function_signature = "func Registered" + type_name + "Routes("
+    if function_signature in router_content:
+        print("SKIPPING: Registered" + type_name + "Routes already exists in " + router_path)
+        return
+
+    print("APPENDING: Registered" + type_name + "Routes to " + router_path)
+    snippet = templates.render("golang/registered_routes_snippet.go.tmpl", type_name=type_name, var_name=var_name)
+    with open(router_path, "a") as f:
+        f.write(snippet)
 
 
 # create files for every layer
