@@ -15,6 +15,16 @@ def init_command(args):
         return
     print('CREATING FILES: ' + files)
 
+    # create config boilerplate (golang only, --initial-setup only) — the
+    # config-aware logger/database variants below depend on the types
+    # defined here
+    if args.language == 'golang' and getattr(args, 'initial_setup', False):
+        config = functions.create_config(args)
+        if config != 'DONE':
+            print('PROBLEM CREATING CONFIG FILE')
+            return
+        print('CREATING CONFIG FILE: ' + config)
+
     # create database connection boilerplate (golang only — same setup every project)
     if args.language == 'golang':
         database = functions.create_database(args)
@@ -45,6 +55,21 @@ def init_command(args):
             return
         print('CREATING LOGGER FILE: ' + logger)
 
+    # create a filled-in health resource + the router that wires it up
+    # (golang only, --initial-setup only)
+    if args.language == 'golang' and getattr(args, 'initial_setup', False):
+        health = functions.create_health(args)
+        if health != 'DONE':
+            print('PROBLEM CREATING HEALTH RESOURCE')
+            return
+        print('CREATING HEALTH RESOURCE: ' + health)
+
+        router = functions.create_router(args)
+        if router != 'DONE':
+            print('PROBLEM CREATING ROUTER FILE')
+            return
+        print('CREATING ROUTER FILE: ' + router)
+
     # create docker files
     if args.docker:
         dockerfile = functions.create_dockerfile(args)
@@ -53,16 +78,19 @@ def init_command(args):
             return
         print('CREATING DOCKER FILES: ' + dockerfile)
 
-    # install dependencies
-    if args.requirements:
+    # install dependencies (--initial-setup implies this — a filled-in health
+    # resource that doesn't compile because its deps were never fetched
+    # defeats the point)
+    if args.requirements or getattr(args, 'initial_setup', False):
         requirements = functions.install_dependencies(args)
         if requirements != 'DONE':
             print('PROBLEM INSTALLING DEPENDENCIES')
             return
         print('INSTALLING REQUIREMENTS:' + requirements)
 
-    # create server file
-    if args.server:
+    # create server file (--initial-setup implies this too — no point wiring
+    # config/logger/db/router/health with nothing to actually run them)
+    if args.server or getattr(args, 'initial_setup', False):
         server = functions.create_server(args)
         if server != 'DONE':
             print('PROBLEM CREATING SERVER FILES')

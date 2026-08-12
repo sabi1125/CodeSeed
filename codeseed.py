@@ -41,6 +41,11 @@ init_parser.add_argument('-a', '--actions',
                     dest='actions',
                     help='SPECIFY IF YOU WANT A GITHUB ACTIONS TO BE ADDED')
 
+init_parser.add_argument('-i', '--initial-setup',
+                    action='store_true',
+                    dest='initial_setup',
+                    help='GOLANG ONLY — GENERATES CONFIG, CONFIG-AWARE LOGGER/DATABASE, ROUTER, AND A FILLED-IN HEALTH RESOURCE, WIRED TOGETHER IN MAIN.GO. IMPLIES --server')
+
 init_parser.add_argument('-u', '--url',
                         dest='url',
                         help='ADD URL TO THE REMOTE REPOSITORY')

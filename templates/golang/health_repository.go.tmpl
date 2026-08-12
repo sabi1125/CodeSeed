@@ -1,0 +1,22 @@
+package repository
+
+import (
+	logger "${module}/internal/log"
+
+	"gorm.io/gorm"
+)
+
+type HealthRepository struct {
+	db *gorm.DB
+}
+
+func NewHealthRepository(db *gorm.DB) *HealthRepository {
+	return &HealthRepository{
+		db: db,
+	}
+}
+
+func (repository *HealthRepository) Health() error {
+	logger.Info("HealthRepository: Healthy")
+	return nil
+}
