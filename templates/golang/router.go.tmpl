@@ -10,10 +10,10 @@ import (
 )
 
 func Router(e *echo.Echo, db *gorm.DB) {
-	RegisteredHealthRouter(e, db)
+	RegisteredHealthRoutes(e, db)
 }
 
-func RegisteredHealthRouter(e *echo.Echo, db *gorm.DB) {
+func RegisteredHealthRoutes(e *echo.Echo, db *gorm.DB) {
 	health := e.Group("/health")
 	repository := repository.NewHealthRepository(db)
 	interactor := interactor.NewHealthInteractor(repository)
