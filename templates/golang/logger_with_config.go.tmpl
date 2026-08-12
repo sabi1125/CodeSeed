@@ -1,0 +1,128 @@
+package logger
+
+import (
+	"time"
+
+	"${module}/internal/config"
+
+	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+)
+
+var log *zap.Logger
+
+// Init initializes the logger from a config.ZapConfig (see config.LoadZapConfig).
+func Init(zapConfig *config.ZapConfig) {
+	encoderConfig := zapcore.EncoderConfig{
+		TimeKey:        "timestamp",
+		LevelKey:       "level",
+		NameKey:        "logger",
+		CallerKey:      "caller",
+		MessageKey:     "message",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.CapitalLevelEncoder,
+		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		EncodeDuration: zapcore.StringDurationEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder,
+	}
+
+	zc := zap.Config{
+		Level:            zap.NewAtomicLevelAt(zapConfig.LogLevel),
+		Development:      zapConfig.IsDevelopment,
+		Encoding:         zapConfig.Encoding,
+		EncoderConfig:    encoderConfig,
+		OutputPaths:      []string{"stdout"},
+		ErrorOutputPaths: []string{"stderr"},
+	}
+
+	built, err := zc.Build()
+	if err != nil {
+		panic("failed to build logger: " + err.Error())
+	}
+
+	log = built
+	log.Info("Logger initialized")
+}
+
+// Get returns the underlying *zap.Logger, for callers that need direct access.
+func Get() *zap.Logger {
+	return log
+}
+
+// Sync flushes any buffered log entries — call before process exit.
+func Sync() {
+	log.Sync()
+}
+
+func Info(msg string, fields ...zap.Field) {
+	log.Info(msg, fields...)
+}
+
+func Infow(msg string, fields ...interface{}) {
+	log.Sugar().Infow(msg, fields...)
+}
+
+func Infof(templateString string, fields ...interface{}) {
+	log.Sugar().Infof(templateString, fields...)
+}
+
+func Warn(msg string, fields ...zap.Field) {
+	log.Warn(msg, fields...)
+}
+
+func Warnw(msg string, fields ...interface{}) {
+	log.Sugar().Warnw(msg, fields...)
+}
+
+func Warnf(templateString string, fields ...interface{}) {
+	log.Sugar().Warnf(templateString, fields...)
+}
+
+func Error(err error, fields ...zap.Field) {
+	log.Error(err.Error(), fields...)
+}
+
+func Errorw(msg string, err error, fields ...interface{}) {
+	log.Sugar().Errorw(msg, append(fields, "error", err.Error())...)
+}
+
+func Fatal(msg string, fields ...zap.Field) {
+	log.Fatal(msg, fields...)
+}
+
+func Fatalf(templateString string, fields ...interface{}) {
+	log.Sugar().Fatalf(templateString, fields...)
+}
+
+func Panic(msg string, fields ...zap.Field) {
+	log.Panic(msg, fields...)
+}
+
+// InitForTest sets up a no-op logger for use in tests.
+func InitForTest() {
+	log = zap.NewNop()
+}
+
+// MiddlewareLogger logs one structured entry per request: method, path,
+// query, response status, client IP, and latency.
+func MiddlewareLogger(logger *zap.Logger) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			start := time.Now()
+			err := next(c)
+
+			logger.Info("Request",
+				zap.String("method", c.Request().Method),
+				zap.String("path", c.Request().URL.Path),
+				zap.String("query", c.Request().URL.RawQuery),
+				zap.Int("status", c.Response().Status),
+				zap.String("client_ip", c.RealIP()),
+				zap.Duration("latency", time.Since(start)),
+			)
+
+			return err
+		}
+	}
+}

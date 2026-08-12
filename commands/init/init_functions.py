@@ -42,6 +42,8 @@ def create_folders(args):
             '/internal/tx',
             '/internal/util'
         ]
+        if getattr(args, 'initial_setup', False):
+            folder_paths.append('/internal/config')
     else:
         folder_paths = [
             '/src',
@@ -110,10 +112,14 @@ def create_files(args):
     return 'UNEXPECTED ERROR ENCOUNTERED'
 
 
-# create logger boilerplate (golang only — same setup every project)
+# create logger boilerplate (golang only — same setup every project).
+# --initial-setup gets the config-aware variant (Init takes a *config.ZapConfig,
+# plus MiddlewareLogger) instead of the default env-parsing-only one.
 def create_logger(args):
+    template = 'golang/logger_with_config.go.tmpl' if getattr(args, 'initial_setup', False) else 'golang/logger.go.tmpl'
+    vars = {'module': args.foldername} if getattr(args, 'initial_setup', False) else {}
     with open('internal/log/logger.go', 'x') as file:
-        file.write(templates.render('golang/logger.go.tmpl'))
+        file.write(templates.render(template, **vars))
     return 'DONE'
 
 
@@ -145,10 +151,14 @@ def create_dockerfile(args):
     os.chdir('..')
     return 'DONE'
 
-# create database connection boilerplate (golang only)
+# create database connection boilerplate (golang only). --initial-setup gets
+# the config-aware variant (Connection takes a *config.DBConfig, Fatals on
+# failure) instead of the default raw-env-parsing one.
 def create_database(args):
+    template = 'golang/database_with_config.go.tmpl' if getattr(args, 'initial_setup', False) else 'golang/database.go.tmpl'
+    vars = {'module': args.foldername} if getattr(args, 'initial_setup', False) else {}
     with open('internal/infrastructure/database.go', 'x') as file:
-        file.write(templates.render('golang/database.go.tmpl'))
+        file.write(templates.render(template, **vars))
     return 'DONE'
 
 # create transaction manager boilerplate (golang only). Manager lives in its
@@ -166,12 +176,53 @@ def create_transaction(args):
         file.write(templates.render('golang/transaction.go.tmpl', module=args.foldername))
     return 'DONE'
 
-# create serverfile
+
+# create config boilerplate (golang only, --initial-setup only). Env loading
+# and validation (Load/LoadDbConfig/LoadZapConfig) — logger.go and
+# database.go's config-aware variants depend on the types defined here.
+def create_config(args):
+    with open('internal/config/config.go', 'x') as file:
+        file.write(templates.render('golang/config.go.tmpl'))
+    with open('internal/config/config_test.go', 'x') as file:
+        file.write(templates.render('golang/config_test.go.tmpl'))
+    return 'DONE'
+
+
+# create router boilerplate (golang only, --initial-setup only). Composition
+# root — wires the health resource's repository/interactor/controller
+# together and mounts it on the Echo instance passed in from main.go.
+def create_router(args):
+    with open('internal/infrastructure/router.go', 'x') as file:
+        file.write(templates.render('golang/router.go.tmpl', module=args.foldername))
+    return 'DONE'
+
+
+# create a filled-in health resource (golang only, --initial-setup only) —
+# unlike `codeseed create <name>`, these aren't empty stubs: a real /health
+# route that exercises every layer (controller -> interactor -> repository),
+# so --initial-setup produces something you can actually curl right after.
+def create_health(args):
+    targets = [
+        ('internal/domain/entities/health.go', 'golang/health_entity.go.tmpl', {}),
+        ('internal/domain/repository/inputport/health_repository_inputport.go', 'golang/health_repository_inputport.go.tmpl', {}),
+        ('internal/domain/repository/health_repository.go', 'golang/health_repository.go.tmpl', {'module': args.foldername}),
+        ('internal/domain/interactor/inputport/health_interactor_inputport.go', 'golang/health_interactor_inputport.go.tmpl', {}),
+        ('internal/domain/interactor/health_interactor.go', 'golang/health_interactor.go.tmpl', {'module': args.foldername}),
+        ('internal/controller/health_controller.go', 'golang/health_controller.go.tmpl', {'module': args.foldername}),
+    ]
+    for path, template, vars in targets:
+        with open(path, 'x') as file:
+            file.write(templates.render(template, **vars))
+    return 'DONE'
+
+# create serverfile. --initial-setup gets the variant wired to config/logger/
+# database/router instead of the bare Echo hello-world.
 def create_server(args):
     if args.language == 'golang':
+        template = 'golang/main_initial_setup.go.tmpl' if getattr(args, 'initial_setup', False) else 'golang/main.go.tmpl'
         os.chdir('cmd/' + args.foldername)
         with open('main.go', 'x') as file:
-            file.write(templates.render('golang/main.go.tmpl', module=args.foldername))
+            file.write(templates.render(template, module=args.foldername))
         os.chdir('../..')
         return 'DONE'
 
@@ -210,6 +261,9 @@ def install_dependencies(args):
             'gorm.io/driver/mysql',
             'go.uber.org/zap'
         ]
+        if getattr(args, 'initial_setup', False):
+            # config.go (--initial-setup only) needs godotenv to load .env
+            dependencies.append('github.com/joho/godotenv')
         for items in dependencies:
             os.system('go get -u ' + items)
 
