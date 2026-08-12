@@ -1,0 +1,25 @@
+package interactor
+
+import (
+	"context"
+
+	"${module}/internal/domain/repository/inputport"
+	logger "${module}/internal/log"
+)
+
+type HealthInteractor struct {
+	healthRepository inputport.HealthRepositoryInputPort
+}
+
+func NewHealthInteractor(healthRepository inputport.HealthRepositoryInputPort) *HealthInteractor {
+	return &HealthInteractor{
+		healthRepository: healthRepository,
+	}
+}
+
+func (interactor *HealthInteractor) Health(ctx context.Context) error {
+	logger.Info("HealthInteractor: Checking health")
+	interactor.healthRepository.Health()
+	logger.Info("HealthInteractor: Health check finished")
+	return nil
+}

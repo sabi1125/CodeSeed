@@ -1,0 +1,28 @@
+package controller
+
+import (
+	"net/http"
+
+	"${module}/internal/domain/interactor/inputport"
+	logger "${module}/internal/log"
+
+	"github.com/labstack/echo/v4"
+)
+
+type HealthController struct {
+	healthInteractor inputport.HealthInteractorInputPort
+}
+
+func NewHealthController(healthInteractor inputport.HealthInteractorInputPort) *HealthController {
+	return &HealthController{
+		healthInteractor: healthInteractor,
+	}
+}
+
+func (controller *HealthController) Health(c echo.Context) error {
+	logger.Info("HealthController: Start checking health")
+	ctx := c.Request().Context()
+	controller.healthInteractor.Health(ctx)
+	logger.Info("HealthController: Health check finished")
+	return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
+}

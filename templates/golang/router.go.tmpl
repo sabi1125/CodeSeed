@@ -1,0 +1,23 @@
+package infrastructure
+
+import (
+	"${module}/internal/controller"
+	"${module}/internal/domain/interactor"
+	"${module}/internal/domain/repository"
+
+	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
+)
+
+func Router(e *echo.Echo, db *gorm.DB) {
+	RegisteredHealthRouter(e, db)
+}
+
+func RegisteredHealthRouter(e *echo.Echo, db *gorm.DB) {
+	health := e.Group("/health")
+	repository := repository.NewHealthRepository(db)
+	interactor := interactor.NewHealthInteractor(repository)
+	controller := controller.NewHealthController(interactor)
+
+	health.GET("", controller.Health)
+}
