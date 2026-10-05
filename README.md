@@ -35,12 +35,20 @@ The following is required for manual installation
 
 
 ### The Easy Way
-The easiest way to use CodeSeed is to download OS specific binary from the latest release and add the 
-path to the binary in your `rc` file or if you are on windows, add the path of the codeseed binary to the Environment variables.
+The easiest way to use CodeSeed is to download the binary for your OS from the [latest release](https://github.com/sabi1125/CodeSeed/releases/latest)
+(`codeseed-linux-amd64`, `codeseed-darwin-arm64` or `codeseed-windows-amd64.exe`), save it as `~/.codeseed/codeseed`, make it executable and add
+its folder to your `rc` file. If you are on windows, add the path of the codeseed binary to the Environment variables instead.
 
 ```sh
- export PATH="$HOME/.codeseed:$PATH" 
- ```
+mkdir -p ~/.codeseed
+curl -L -o ~/.codeseed/codeseed https://github.com/sabi1125/CodeSeed/releases/latest/download/codeseed-linux-amd64
+chmod +x ~/.codeseed/codeseed
+export PATH="$HOME/.codeseed:$PATH"
+```
+
+After that, `codeseed upgrade` keeps it up to date.
+
+> [!NOTE] *Release binaries are attached starting with the first release after v1.0.1; v1.0.1 and older have none, so use the manual install for those. There is no Intel mac binary — build it manually.*
 ### Manually
 
 #### Linux && Darwin
@@ -88,6 +96,8 @@ codeseed init --language golang --url git@github.com:sabi1125/CodeSeed.git
 | create     | Creates the controller, interactor and repository files (golang: plus their `inputport` interfaces and `entities`) | `codeseed create <filename>` |
 | remove     | Deletes a resource's layer files (golang only)          | `codeseed remove [<name>]`                 |
 | update     | Renames a resource's files and identifiers (golang only)| `codeseed update [--from <name>] [--to <new-name>]` |
+| upgrade    | Replaces the installed binary with the latest GitHub release, if newer | `codeseed upgrade`                |
+| version    | Prints the installed version (same as `-v`)             | `codeseed version`                         |
 
 ### Project layout by language
 
@@ -116,6 +126,12 @@ internal/
 `codeseed create <name>` fills in a struct + constructor + empty interface per layer — method bodies are yours to write, not generated. The `inputport/` files carry a `go:generate mockgen` directive (`go.uber.org/mock`) so a mock is one `go generate ./...` away once the interface has methods on it.
 
 `internal/infrastructure/` is generated with a `database.go` (GORM + MySQL connection via `DB_*` env vars) on every golang init.
+
+### upgrade
+
+`codeseed upgrade` checks the latest GitHub release and, if it's newer than the installed version, downloads the binary for your OS/arch and swaps it in place of the running one. It only works for the release binary — if you built codeseed with `install.sh` it still works (it replaces `~/.codeseed/codeseed`), but if you run it from source (`python3 codeseed.py`) or the release has no binary for your platform, update with `git pull` + `./install.sh` instead.
+
+**Releasing:** bump `VERSION` in `utils/version.py`, merge, then push a matching tag (`git tag v1.0.2 && git push origin v1.0.2`). The `Release Binaries` workflow builds the binaries and attaches them to that release; it fails if the tag and `VERSION` don't match.
 
 ### remove and update (golang only)
 
