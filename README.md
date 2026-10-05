@@ -115,6 +115,8 @@ internal/
 
 `codeseed create <name>` fills in a struct + constructor + empty interface per layer — method bodies are yours to write, not generated. The `inputport/` files carry a `go:generate mockgen` directive (`go.uber.org/mock`) so a mock is one `go generate ./...` away once the interface has methods on it.
 
+With `--initial-setup`, `create <name>` also wires the resource into `internal/infrastructure/router.go`: it appends a `Registered<Name>Router` that builds repository -> interactor -> controller and opens `e.Group("/<name>")`, and calls it from `Router()`. No routes are registered — the method and path are yours to add. Running it again doesn't duplicate anything, and `remove`/`update` delete/rename the function and its call too. If `router.go` is missing (no `--initial-setup`) or has no `func Router(`, wiring is skipped with a warning.
+
 `internal/infrastructure/` is generated with a `database.go` (GORM + MySQL connection via `DB_*` env vars) on every golang init.
 
 ### remove and update (golang only)
@@ -129,7 +131,7 @@ codeseed remove
 # Enter number:
 ```
 
-`codeseed update` renames the layer files for a resource and rewrites the identifiers inside them (`ProblemInteractor` -> `WidgetInteractor`, etc.) — content you've already written in those files is preserved, only the exact old identifiers get swapped. It does **not** chase references to the old name in other files (e.g. wiring in `main.go`) — you'll get a note printed if that applies.
+`codeseed update` renames the layer files for a resource and rewrites the identifiers inside them (`ProblemInteractor` -> `WidgetInteractor`, etc.) — content you've already written in those files is preserved, only the exact old identifiers get swapped. It also renames the resource's `Registered<Name>Router` in `router.go`, but does **not** chase references to the old name in any other file (e.g. `main.go`) — you'll get a note printed if that applies.
 
 Both accept explicit args too, skipping the picker: `codeseed remove <name>`, `codeseed update --from <name> --to <new-name>`.
 

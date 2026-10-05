@@ -46,5 +46,5 @@ def update_command(args):
         json.dump(config, f, indent=4)
 
     print('RENAMED RESOURCE: ' + old_filename + ' -> ' + new_filename)
-    print('NOTE: identifiers were renamed within these files only — if other files '
+    print('NOTE: identifiers were renamed within these files (and router.go) only — if other files '
           'reference "' + old_filename.capitalize() + '", update those manually.')

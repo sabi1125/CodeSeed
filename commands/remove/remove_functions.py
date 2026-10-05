@@ -20,11 +20,29 @@ def _remove_golang_files(project_root, filename, file_separator):
     return "DONE"
 
 
+# drops Registered<Name>Router and its call inside Router(), if present
+def _unwire_golang_router(project_root, filename, file_separator):
+    content, path = create_functions.read_golang_router(project_root, file_separator)
+    if content is None:
+        return
+
+    type_name = filename.capitalize()
+    new_content = create_functions.registered_router_func_re(type_name).sub("\n", content, count=1)
+    new_content = create_functions.registered_router_call_re(type_name).sub("", new_content)
+
+    if new_content != content:
+        with open(path, "w") as f:
+            f.write(new_content)
+        print("UNWIRED: Registered" + type_name + "Router FROM " + path)
+
+
 def remove_files(project_root, filename, project_language, file_separator):
     if project_language != "golang":
         return "REMOVE IS CURRENTLY ONLY SUPPORTED FOR GOLANG PROJECTS"
 
-    return _remove_golang_files(project_root, filename, file_separator)
+    result = _remove_golang_files(project_root, filename, file_separator)
+    _unwire_golang_router(project_root, filename, file_separator)
+    return result
 
 
 def forget_recent_resource(config, config_path, filename):
