@@ -1,0 +1,73 @@
+name: Release Binaries
+
+# builds the codeseed binary per OS when a version tag is pushed and attaches
+# it to that tag's GitHub release (creating the release if it doesn't exist).
+# `codeseed upgrade` downloads these by name, so keep the names in sync with
+# asset_name() in commands/upgrade/upgrade_functions.py.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            asset: codeseed-linux-amd64
+          - os: macos-latest
+            asset: codeseed-darwin-arm64
+          - os: windows-latest
+            asset: codeseed-windows-amd64
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # `codeseed -v` and `upgrade` read utils/version.py, so a tag that doesn't
+    # match it would ship a binary that keeps thinking it's out of date.
+    - name: Check tag matches utils/version.py
+      run: |
+        version=$(python -c "import sys; sys.path.insert(0, 'utils'); from version import VERSION; print(VERSION)")
+        if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+          echo "tag $GITHUB_REF_NAME does not match utils/version.py (v$version)"
+          exit 1
+        fi
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Build with PyInstaller
+      run: python -m PyInstaller --onefile --add-data "templates:templates" --name ${{ matrix.asset }} codeseed.py
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.asset }}
+        path: dist/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        path: dist
+        merge-multiple: true
+
+    - uses: softprops/action-gh-release@v2
+      with:
+        files: dist/*

@@ -6,11 +6,13 @@ from commands.init import init
 from commands.create import create
 from commands.remove import remove
 from commands.update import update
+from commands.upgrade import upgrade
+from utils.version import VERSION
 
 parser = argparse.ArgumentParser()
 subparser = parser.add_subparsers(dest="command")
 # version
-version = parser.add_argument("-v","--version", action="version", version="CodeSeed v0.2.1" ,help="DISPAYS CURRENT INSTALLED CODESEED VERSION")
+version = parser.add_argument("-v","--version", action="version", version="CodeSeed v" + VERSION ,help="DISPAYS CURRENT INSTALLED CODESEED VERSION")
 
 # init command
 init_parser = subparser.add_parser("init", help="INITILIZES INIT COMMAND")
@@ -87,6 +89,12 @@ update_parser.add_argument('--to',
                            default=None,
                            help="NEW RESOURCE NAME — OMIT TO BE PROMPTED")
 
+# version command
+subparser.add_parser("version", help="DISPAYS CURRENT INSTALLED CODESEED VERSION")
+
+# upgrade command
+subparser.add_parser("upgrade", help="REPLACES THE INSTALLED CODESEED BINARY WITH THE LATEST GITHUB RELEASE")
+
 
 args = parser.parse_args()
 args.platform = platform.system()
@@ -99,5 +107,7 @@ elif args.command == "remove":
     remove.remove_command(args)
 elif args.command == "update":
     update.update_command(args)
+elif args.command == "upgrade":
+    upgrade.upgrade_command(args)
 elif args.command == "version":
-    print(args)
+    print("CodeSeed v" + VERSION)
