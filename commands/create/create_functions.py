@@ -1,4 +1,5 @@
 import os
+import re
 import json
 
 from utils import pathmaker
@@ -86,6 +87,70 @@ def golang_layer_targets(project_root, filename, file_separator):
     ]
 
 
+def golang_router_path(project_root, file_separator):
+    return project_root + file_separator + "internal" + file_separator + "infrastructure" + file_separator + "router.go"
+
+
+# body of `func Router(...) {` up to the first closing brace at column 0
+ROUTER_FUNC_RE = re.compile(r"^func Router\([^)]*\)\s*\{\n(.*?)^\}", re.MULTILINE | re.DOTALL)
+
+
+# a whole Registered<Name>Router function, plus the blank line(s) before it
+def registered_router_func_re(type_name):
+    return re.compile(r"\n*^func Registered" + type_name + r"Router\(.*?^\}\n?", re.MULTILINE | re.DOTALL)
+
+
+def registered_router_call_re(type_name):
+    return re.compile(r"^[ \t]*Registered" + type_name + r"Router\(.*\)\n", re.MULTILINE)
+
+
+# reads router.go for wiring, or returns None (with a warning) when it's
+# missing or doesn't have the `func Router(` shape --initial-setup generates —
+# wiring is skipped then, never a crash
+def read_golang_router(project_root, file_separator):
+    path = golang_router_path(project_root, file_separator)
+    if not os.path.exists(path):
+        print("SKIPPING ROUTER WIRING: " + path + " NOT FOUND")
+        return None, path
+
+    with open(path, "r") as f:
+        content = f.read()
+
+    if ROUTER_FUNC_RE.search(content) is None:
+        print("SKIPPING ROUTER WIRING: NO `func Router(` FOUND IN " + path)
+        return None, path
+
+    return content, path
+
+
+# adds Registered<Name>Router (repository -> interactor -> controller, no
+# routes) and its call inside Router(). Each half is skipped if already there,
+# so running it twice for the same name doesn't duplicate anything.
+def wire_golang_router(project_root, filename, file_separator):
+    content, path = read_golang_router(project_root, file_separator)
+    if content is None:
+        return
+
+    type_name = filename.capitalize()
+    original = content
+
+    if registered_router_func_re(type_name).search(content) is None:
+        content = content.rstrip("\n") + "\n\n" + templates.render("golang/router_resource.go.tmpl", type_name=type_name, var_name=filename)
+
+    if registered_router_call_re(type_name).search(content) is None:
+        match = ROUTER_FUNC_RE.search(content)
+        call = "\tRegistered" + type_name + "Router(e, db)\n"
+        content = content[:match.end(1)] + call + content[match.end(1):]
+
+    if content == original:
+        print("ALREADY WIRED: Registered" + type_name + "Router IN " + path)
+        return
+
+    with open(path, "w") as f:
+        f.write(content)
+    print("WIRED: Registered" + type_name + "Router INTO " + path)
+
+
 def _create_golang_files(project_root, filename, file_separator, with_test, config, config_path):
     for target in golang_layer_targets(project_root, filename, file_separator):
         parent = os.path.dirname(target["path"])
@@ -105,6 +170,7 @@ def _create_golang_files(project_root, filename, file_separator, with_test, conf
             with open(test_path, "w") as f:
                 f.write("package " + target["package"] + "\n")
 
+    wire_golang_router(project_root, filename, file_separator)
     record_recent_resource(config, config_path, filename)
     return "DONE"
 
